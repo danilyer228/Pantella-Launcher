@@ -1,23 +1,23 @@
 # Pantella Launcher
 
-Launcher for easily running Mantella development branches from source in it's proper dev/production ready environment.
+Launcher for easily running Pantella/Mantella repos from source in it's proper dev/production ready environment.
 
 ![Screenshot of the Pantella Launcher running Pantella with LLaVA 1.6 34B and nvitop in the background.](https://raw.githubusercontent.com/Pathos14489/Mantella-Launcher/main/assets/example.png)
 ![Screenshot of the Pantella Launcher Settings Page](https://raw.githubusercontent.com/Pathos14489/Mantella-Launcher/main/assets/example_2.png)
 
 ## Features
  
-- Download and run Mantella forks from source
+- Download and run Pantella/Mantella forks from source
 - Automatically get notified of new updates and update forks to the latest version when you're ready
-- Easily switch between forks, games and plugins with Mantella and other repositories
+- Easily switch between forks, games and plugins with Pantella and other repositories
 - Easy to use interface
-- Don't have to install Python or any dependencies to run the Mantella server, it comes with an embedded Python environment and all the dependencies it needs to run Mantella and Pantella out of the box
+- Don't have to install Python or any dependencies to run the Pantella server, it comes with an embedded Python environment and all the dependencies it needs to run Pantella and Mantella out of the box
 - Automatic Crash Recovery
-- Easily manage Mantella repositories across multiple games and mod managers
+- Easily manage Pantella repositories across multiple games and mod managers
 
 ## How to Use
 
-Download the latest release from the releases tab, or clone this repository and build from source. Unzip the release following the instructions in the release notes, and run the Pantella_Launcher.exe. Download a fork and click Start to open Mantella/Pantella. After downloading and deploying a repository, please verify that all configuration settings are set in the repository you're trying to use before reporting a bug. Mantella uses config.ini and Pantella uses config.json/webUI settings. If you're having trouble with a repository, please report the issue to the repository's issue tracker unless this is an issue with the launcher itself.
+Download the latest release from the releases tab, or clone this repository and build from source. Unzip the release following the instructions in the release notes, and run the Pantella_Launcher.exe. Download a fork and click Start to open Pantella/Mantella. After downloading and deploying a repository, please verify that all configuration settings are set in the repository you're trying to use before reporting a bug. Mantella uses config.ini and Pantella uses config.json/webUI settings. If you're having trouble with a repository, please report the issue to the repository's issue tracker unless this is an issue with the launcher itself.
 
 ### Warning:
 
@@ -50,3 +50,7 @@ Run the ./run_repo.py file in the command prompt to see the error messages. This
 python-3.10.11-embed/python.exe ./run_repo.py "Git/Rename-This-Repo-Here"
 ```
 Above is the way that the launcher itself will run the script, but you can also run it manually if you have python installed on your system and the correct depdenencies installed. Or you can directly run the Mantella script using the embedded python. The command prompt will show you the error messages that you can use to diagnose the issue and report it to the fork's issue tracker. The launcher itself also has a log file, and most Mantella forks also have a logging.log file as well.
+
+## Mantella Support
+
+I've not used Mantella in a long time at this point, I've tested that the launcher runs Mantella enough that it reaches the web UI, but I haven't tested all features. If you find any issues with Mantella support, please let me know by opening an issue or messaging in the Discord.
