@@ -118,18 +118,18 @@ func _process(delta):
 				print("Process " + str(PID) + " has exited")
 				var repos = get_tree().get_nodes_in_group("repository")
 				if PID in watched_pids:
-					var ip = watched_pids[PID][0]
+					var interpreter_path_ = watched_pids[PID][0]
 					var args = watched_pids[PID][1]
 					var console = watched_pids[PID][2]
 					var watchdog = watched_pids[PID][3]
-					print("Restarting process: " + str(PID))
-					var newPID = OS.create_process(ip, args, console)
+					print("Restarting process: " + str(PID)+ " with interpreter: " + interpreter_path_ + " and args: " + str(args))
+					var newPID = OS.create_process(interpreter_path_, args, console)
 					watched_pids.erase(PID)
 					for repo in repos:
 						if repo.PID == PID:
 							repo.PID = newPID
 					if watchdog:
-						watched_pids[newPID] = [interpreter_path, args, console, watchdog]
+						watched_pids[newPID] = [interpreter_path_, args, console, watchdog]
 						print("Watchdog enabled for process: " + str(newPID))
 					process_ids.append(newPID)
 				else:

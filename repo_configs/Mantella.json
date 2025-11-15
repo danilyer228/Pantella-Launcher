@@ -5,14 +5,14 @@
 		"data",
 		"GPT_SECRET_KEY.txt"
 	],
-	"color": "darkgreen",
 	"branch": "main",
+	"color": "darkgreen",
 	"commit": "",
-	"dir_suffix": "",
 	"config_files": [
 		"config.ini"
 	],
 	"description": "The Original Mantella dev repository. Mostly bug free, primarily built towards OpenAI chat completions. Slower release cycle, but more stable.\n\nSupports: Skyrim SE/AE, Skyrim VR, Fallout 4 and Fallout 4 VR",
+	"dir_suffix": "",
 	"entry_point": "main.py",
 	"file_name": "Mantella.json",
 	"install_requirements": false,

@@ -61,7 +61,9 @@ func apply_repo(json):
 		repositories_dir = ProjectSettings.globalize_path(repositories_dir)
 	else:
 		repositories_dir = DIR + repositories_dir.replace("res://", "")
-	repo_dir = repositories_dir+repo["repo"].replace("/", "_")+repo["dir_suffix"]
+	repo_dir = repositories_dir+repo["repo"].replace("/", "_")
+	if repo["dir_suffix"] != "":
+		repo_dir += repo["dir_suffix"]
 	
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = false
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Start").visible = false
@@ -83,61 +85,122 @@ func check_for_updates(force=false):
 	# Check every fifteen minutes
 	if not force:
 		if current_timestamp - repo.last_checked_for_updates < 900: # 15 minutes
+			print("Checked "+repo["name"]+repo["dir_suffix"]+" recently, skipping update check")
 			return
 	if repo["commit"] != "":
-		print("Static commit - no updates")
+		print(repo["name"]+repo["dir_suffix"]+"is a static commit repo - no updates required")
 		return
-	print("Checking for updates")
-	var repo_api_url = "https://api.github.com/repos/" + repo["repo"] + "/commits"
-	var new_commit_info_path = "res://temp/" + repo["repo"].replace("/", "_") + ".json"
-	var old_commit_info_path = "res://install_info/" + repo["repo"].replace("/", "_") + ".json"
-	var already_downloaded = false
-	if FileAccess.file_exists(old_commit_info_path):
-		already_downloaded = true
-		$GithubHTTPRequest.download_file = new_commit_info_path
-		# if file already exists, remove it
-		if FileAccess.file_exists(new_commit_info_path):
-			OS.move_to_trash(new_commit_info_path)
+	var old_commit_info_path = "res://install_info/" + repo["repo"].replace("/", "_") + repo["dir_suffix"] + ".json"
+	var global_oc_info_path = null
+	if !OS.has_feature("standalone"):
+		global_oc_info_path = ProjectSettings.globalize_path(old_commit_info_path)
 	else:
-		$GithubHTTPRequest.download_file = old_commit_info_path
-	await $GithubHTTPRequest/OffsetTimer.timeout
-	$GithubHTTPRequest.request(repo_api_url)
-	await $GithubHTTPRequest.request_completed
-	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").text = "No Updates Available"
-	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = false
-	if already_downloaded:
-		var new_commit_info = JSON.parse_string(FileAccess.open(new_commit_info_path, FileAccess.READ).get_as_text())[0]
-		var old_commit_info = JSON.parse_string(FileAccess.open(old_commit_info_path, FileAccess.READ).get_as_text())[0]
-		if old_commit_info["sha"] != new_commit_info["sha"]:
-			print("New commit found")
+		global_oc_info_path = DIR + old_commit_info_path.replace("res://", "")
+	print("Global OC Info Path: " + global_oc_info_path)
+	if FileAccess.file_exists(global_oc_info_path):
+		print("Checking "+repo["name"]+repo["dir_suffix"]+" for updates")
+		var repo_api_url = "https://api.github.com/repos/" + repo["repo"] + "/commits"
+		var new_commit_info_path = "res://temp/" + repo["repo"].replace("/", "_") + repo["dir_suffix"] + ".json"
+		var global_new_commit_info_path = null
+		if !OS.has_feature("standalone"):
+			global_new_commit_info_path = ProjectSettings.globalize_path(new_commit_info_path)
+		else:
+			global_new_commit_info_path = DIR + new_commit_info_path.replace("res://", "")
+		# if file already exists, remove it
+		if FileAccess.file_exists(global_new_commit_info_path):
+			OS.move_to_trash(global_new_commit_info_path)
+
+		$GithubHTTPRequest.download_file = global_new_commit_info_path
+		await $GithubHTTPRequest/OffsetTimer.timeout
+		$GithubHTTPRequest.request(repo_api_url)
+		await $GithubHTTPRequest.request_completed
+
+		var need_update = false
+
+		var new_commit_file = FileAccess.open(global_new_commit_info_path, FileAccess.READ)
+		if new_commit_file != null:
+			var new_commit_info = JSON.parse_string(new_commit_file.get_as_text())
+			if new_commit_info is Array:
+				new_commit_info = new_commit_info[0]
+			else:
+				print("Error: Unexpected JSON format (You're probably ratelimited! Try to update again later!")
+				return
+			var old_commit_info = JSON.parse_string(FileAccess.open(global_oc_info_path, FileAccess.READ).get_as_text())[0]
+			if old_commit_info["sha"] != new_commit_info["sha"]:
+				print("check_for_update: New "+repo["name"]+" commit found: new" + new_commit_info["sha"] + " vs old" + old_commit_info["sha"])
+				need_update = true
+			repo["last_checked_for_updates"] = current_timestamp
+			save_repo()
+
+		# Check for plugin updates
+		for plugin_node in plugins_list.get_children():
+			if plugin_node.visible and plugin_node and is_instance_valid(plugin_node): # Check if the plugin_node is not previously freed yet
+				print("check_for_update: Checking for updates in plugin: " + plugin_node.plugin["name"])
+				var plugin = plugin_node.plugin
+				var plugin_api_url = "https://api.github.com/repos/" + plugin["repo"] + "/commits"
+				
+				var new_plugin_commit_info_path = "res://temp/" + plugin["repo"].replace("/", "_") + ".json"
+				var old_plugin_commit_info_path = "res://install_info/" + plugin["repo"].replace("/", "_") + ".json"
+				var plugin_dir = "res://repositories/" + plugin["repo"].replace("/", "_")
+				if plugin["dir_suffix"] != "":
+					new_plugin_commit_info_path = "res://temp/" + plugin["repo"].replace("/", "_") + plugin["dir_suffix"] + ".json"
+					old_plugin_commit_info_path = "res://install_info/" + plugin["repo"].replace("/", "_") + plugin["dir_suffix"] + ".json"
+					plugin_dir = "res://repositories/" + plugin["repo"].replace("/", "_") + plugin["dir_suffix"]
+				# Globalize
+				var global_old_plugin_commit_info_path = null
+				var global_new_plugin_commit_info_path = null
+				var global_plugin_dir = null
+				if !OS.has_feature("standalone"):
+					global_old_plugin_commit_info_path = ProjectSettings.globalize_path(old_plugin_commit_info_path)
+					global_new_plugin_commit_info_path = ProjectSettings.globalize_path(new_plugin_commit_info_path)
+					global_plugin_dir = ProjectSettings.globalize_path(plugin_dir)
+				else:
+					global_old_plugin_commit_info_path = DIR + old_plugin_commit_info_path.replace("res://", "")
+					global_new_plugin_commit_info_path = DIR + new_plugin_commit_info_path.replace("res://", "")
+					global_plugin_dir = DIR + plugin_dir.replace("res://", "")
+				var plugin_commit_info_exists = FileAccess.file_exists(global_old_plugin_commit_info_path)
+
+				$GithubHTTPRequest.download_file = global_new_plugin_commit_info_path # Download the new plugin commit info
+				# if plugin_commit_info_exists:
+				# 	$GithubHTTPRequest.download_file = global_old_plugin_commit_info_path
+
+				await $GithubHTTPRequest/OffsetTimer.timeout
+				$GithubHTTPRequest.request(plugin_api_url) # Request the plugin commit info
+				await $GithubHTTPRequest.request_completed
+
+				var plugin_already_installed = false
+				if DirAccess.dir_exists_absolute(global_plugin_dir):
+					plugin_already_installed = true
+
+				if not plugin_already_installed: # Plugin not installed
+					print("check_for_update: New "+repo["name"]+"["+plugin["name"]+"] plugin found: " + global_new_plugin_commit_info_path)
+					need_update = true
+				else: # Plugin already installed
+					if not plugin_commit_info_exists: # Old plugin commit info does not exist
+						print("check_for_update: Old "+repo["name"]+"["+plugin["name"]+"] plugin commit info does not exist at: " + global_old_plugin_commit_info_path)
+						need_update = true
+					else: # Old plugin commit info exists
+						var new_plugin_file = FileAccess.open(global_new_plugin_commit_info_path, FileAccess.READ)
+						if new_plugin_file != null: # New plugin commit info exists
+							var new_plugin_commit_info = JSON.parse_string(new_plugin_file.get_as_text())
+							if new_plugin_commit_info is Array:
+								new_plugin_commit_info = new_plugin_commit_info[0]
+							else:
+								print("Error: Unexpected JSON format (You're probably ratelimited! Try to update again later!")
+								return
+							var old_plugin_commit_info = JSON.parse_string(FileAccess.open(global_old_plugin_commit_info_path, FileAccess.READ).get_as_text())[0] # Old plugin commit info
+							if old_plugin_commit_info["sha"] != new_plugin_commit_info["sha"]:
+								print("check_for_update: New "+repo["name"]+"["+plugin["name"]+"] plugin commit found: new" + new_plugin_commit_info["sha"] + " vs old" + old_plugin_commit_info["sha"])
+								need_update = true
+							# move the temp commit info to trash, it is no longer needed - I think
+							OS.move_to_trash(global_new_plugin_commit_info_path)
+		if need_update:
 			get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").text = "Update"
 			get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = true
-	repo["last_checked_for_updates"] = current_timestamp
-	save_repo()
-
-	# Check for plugin updates
-	for plugin_node in get_tree().get_nodes_in_group("plugin"):
-		# Check if the plugin_node is not previously freed yet
-		if plugin_node and is_instance_valid(plugin_node):
-			var plugin = plugin_node.plugin
-			var plugin_api_url = "https://api.github.com/repos/" + plugin["repo"] + "/commits"
-			var new_plugin_commit_info_path = "res://temp/" + plugin["repo"].replace("/", "_") + ".json"
-			var old_plugin_commit_info_path = "res://install_info/" + plugin["repo"].replace("/", "_") + ".json"
-			$GithubHTTPRequest.download_file = new_plugin_commit_info_path
-			await $GithubHTTPRequest/OffsetTimer.timeout
-			$GithubHTTPRequest.request(plugin_api_url)
-			await $GithubHTTPRequest.request_completed
-			var new_plugin_commit_info = JSON.parse_string(FileAccess.open(new_plugin_commit_info_path, FileAccess.READ).get_as_text())[0]
-			var old_plugin_commit_info = JSON.parse_string(FileAccess.open(old_plugin_commit_info_path, FileAccess.READ).get_as_text())[0]
-			if old_plugin_commit_info["sha"] != new_plugin_commit_info["sha"]:
-				print("New plugin commit found")
-				get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").text = "Update"
-				get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = true
-			# move the temp commit info to trash, it is no longer needed - I think
-			OS.move_to_trash(new_plugin_commit_info_path)
-
-	
-	print("Checked for updates")
+		else:
+			get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").text = "No Updates Available"
+			get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = false
+		print("Checked "+repo["name"]+" for updates")
 
 func populate_plugins_list():
 	# Clear the plugins list
@@ -158,54 +221,93 @@ func download_repo():
 	print("Downloading latest repo")
 	root.show_spinner()
 	# Get all nodes in group download_buttons and disable them - this is to prevent multiple downloads at the same time
+	print(repo)
 	var buttons = get_tree().get_nodes_in_group("download_buttons")
 	for button in buttons:
 		button.disabled = true
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").text = "Downloading..."
 	status_bar.text = "Downloading " + repo["repo"] + "..."
-	ui.start_download(repo["repo"])
 	
-	var update_repo = false
-	var repo_already_installed = false
-	var commit_info_path = "res://install_info/" + repo["repo"].replace("/", "_")+repo["dir_suffix"] + ".json"
-	var temp_commit_info_path = "res://temp/" + repo["repo"].replace("/", "_")+repo["dir_suffix"] + ".json"
-	if repo["commit"] != "":
-		if DirAccess.dir_exists_absolute("res://repositories/" + repo["repo"].replace("/", "_")+repo["dir_suffix"]):
-			repo_already_installed = true
+	
+	var commit_info_path = "res://install_info/" + repo["repo"].replace("/", "_") + ".json"
+	var temp_commit_info_path = "res://temp/" + repo["repo"].replace("/", "_") + ".json"
+	if repo["dir_suffix"] != "":
+		commit_info_path += repo["dir_suffix"]
+		temp_commit_info_path += repo["dir_suffix"]
+	# Globalize
+	var global_c_info_path = null
+	var global_temp_c_info_path = null
+	if !OS.has_feature("standalone"):
+		global_c_info_path = ProjectSettings.globalize_path(commit_info_path)
+		global_temp_c_info_path = ProjectSettings.globalize_path(temp_commit_info_path)
 	else:
-		# Download the commit info
-		var repo_api_url = "https://api.github.com/repos/" + repo["repo"] + "/commits"
-		if FileAccess.file_exists(commit_info_path):
-			if DirAccess.dir_exists_absolute("res://repositories/" + repo["repo"].replace("/", "_"))+repo["dir_suffix"]:
-				repo_already_installed = true
-				$GithubHTTPRequest.download_file = temp_commit_info_path
-				print("Repo already installed")
-			else:
-				# Clear the old commit info
-				OS.move_to_trash(commit_info_path)
-				$GithubHTTPRequest.download_file = commit_info_path
+		global_c_info_path = DIR + commit_info_path.replace("res://", "")
+		global_temp_c_info_path = DIR + temp_commit_info_path.replace("res://", "")
+		
+	var repo_already_installed = false
+	if DirAccess.dir_exists_absolute(repo_dir):
+		repo_already_installed = true
+
+
+	var commit_info_exists = FileAccess.file_exists(global_c_info_path) # Boolean to check if commit info file exists
+	var update_repo = false
+	var should_download_commit = false
+	var repo_api_url = "https://api.github.com/repos/" + repo["repo"] + "/commits"
+
+
+	if repo["commit"] != "": # Static Commit
+		if not repo_already_installed: # Static Commit
+			if not commit_info_exists:
+				should_download_commit = true
+			update_repo = true
+	else: # Latest Commit
+		if repo_already_installed:
+			# Download the commit info
+			if commit_info_exists: # Commit info exists - Downloading to temporary destination
+				$GithubHTTPRequest.download_file = global_temp_c_info_path
+				should_download_commit = true
+				print("Repo already installed -- downloading latest commit info to temp")
+			else: # Commit info does not exist - Downloading to final destination
+				$GithubHTTPRequest.download_file = global_c_info_path
+				print("Repo not installed -- downloading commit info")
+				should_download_commit = true
 				update_repo = true
 		else:
-			$GithubHTTPRequest.download_file = commit_info_path
-			update_repo = true
+			# Handle the case where the repo is not already installed
 			print("Repo not installed -- downloading commit info")
+			$GithubHTTPRequest.download_file = global_c_info_path
+			should_download_commit = true
+			update_repo = true
+		
+	if should_download_commit:
 		await $GithubHTTPRequest/OffsetTimer.timeout
 		$GithubHTTPRequest.request(repo_api_url)
 		await $GithubHTTPRequest.request_completed
-	
-		if repo_already_installed:
-			# Load the commit info from the file
-			var new_commit_info = JSON.parse_string(FileAccess.open(temp_commit_info_path, FileAccess.READ).get_as_text())[0]
-			var old_commit_info = JSON.parse_string(FileAccess.open(commit_info_path, FileAccess.READ).get_as_text())[0]
-			if old_commit_info["sha"] != new_commit_info["sha"]:
-				update_repo = true
-			else:
-				status_bar.text = "Backend already up to date"
-		
+
+	if repo_already_installed and commit_info_exists and not update_repo:
+		print("Repo already installed -- loading commit infos to check for updates")
+		# Load the commit info from the file
+		var new_commit_info = JSON.parse_string(FileAccess.open(global_temp_c_info_path, FileAccess.READ).get_as_text())
+		if new_commit_info is Array:
+			new_commit_info = new_commit_info[0]
+		else:
+			print("Error: Unexpected JSON format (You're probably ratelimited! Try to update again later!")
+			return
+		var old_commit_info = JSON.parse_string(FileAccess.open(global_c_info_path, FileAccess.READ).get_as_text())[0]
+		print("Commits: new" + new_commit_info["sha"] + " vs old" + old_commit_info["sha"])
+		if old_commit_info["sha"] != new_commit_info["sha"]:
+			update_repo = true
+			print("New "+repo["name"]+" commit found: new" + new_commit_info["sha"] + " vs old" + old_commit_info["sha"])
+		else:
+			status_bar.text = repo["name"] + " already up to date!"
+
+	print("Should Update: " + str(update_repo))
 	if update_repo:
 		# Download the repo
+		print("Downloading " + repo["name"] + "...")
+		ui.start_download(repo["repo"])
 		var repo_url = "https://github.com/" + repo["repo"] + "/archive/refs/heads/"+repo["branch"]+".zip"
-		if repo["commit"] != "":
+		if repo["commit"] != "": # Static commit
 			repo_url = "https://github.com/" + repo["repo"] + "/archive/"+repo["commit"]+".zip"
 		print(repo_url)
 		var repo_path = "res://temp/" + repo["repo"].replace("/", "_")+repo["commit"] + ".zip"
@@ -221,11 +323,12 @@ func download_repo():
 		}
 		await download_extracted # Wait for repo download to complete
 		# Replace the old commit info with the new commit info
-		OS.move_to_trash(commit_info_path)
+		print("Deleting "+global_c_info_path)
+		OS.move_to_trash(global_c_info_path)
 		var move_old_commit_info_to_trash_command = [
 			"Move-Item",
-			"\"\"" + temp_commit_info_path.replace(" ","' '") + "\"\"",
-			"\"\"" + commit_info_path.replace(" ","' '") + "\"\""
+			"\"\"" + global_temp_c_info_path.replace(" ","' '") + "\"\"",
+			"\"\"" + global_c_info_path.replace(" ","' '") + "\"\""
 		]
 		
 		# copy commit history
@@ -235,56 +338,73 @@ func download_repo():
 		print("Output: " + " ".join(output1))
 		# OS.execute("mv", [, ])
 	else:
-		OS.move_to_trash(temp_commit_info_path)
+		print("No Updated Needed: Discarding latest commit info: " + global_temp_c_info_path)
+		OS.move_to_trash(global_temp_c_info_path)
 	
 	# Download related plugins
 	status_bar.text = "Downloading " + repo["name"] + " Plugins..."
 	for plugin in repo["plugins"]:
-
-		var plugin_download = false
+		var plugin_download = true
 		
 		var plugin_repo_api_url = "https://api.github.com/repos/" + plugin["repo"] + "/commits"
+		
 		var plugin_commit_info_path = "res://install_info/" + plugin["repo"].replace("/", "_") + ".json"
 		var temp_plugin_commit_info_path = "res://temp/" + plugin["repo"].replace("/", "_") + ".json"
+		var plugin_dir = "res://repositories/" + plugin["repo"].replace("/", "_")
+		if plugin["dir_suffix"] != "":
+			plugin_commit_info_path = "res://install_info/" + plugin["repo"].replace("/", "_") + plugin["dir_suffix"] + ".json"
+			temp_plugin_commit_info_path = "res://temp/" + plugin["repo"].replace("/", "_") + plugin["dir_suffix"] + ".json"
+			plugin_dir = "res://repositories/" + plugin["repo"].replace("/", "_") + plugin["dir_suffix"]
+		# Globalize
+		var global_plugin_c_info_path = null
+		var global_temp_plugin_c_info_path = null
+		var global_plugin_dir = null
+		if !OS.has_feature("standalone"):
+			global_plugin_c_info_path = ProjectSettings.globalize_path(plugin_commit_info_path)
+			global_temp_plugin_c_info_path = ProjectSettings.globalize_path(temp_plugin_commit_info_path)
+			global_plugin_dir = ProjectSettings.globalize_path(plugin_dir)
+		else:
+			global_plugin_c_info_path = DIR + plugin_commit_info_path.replace("res://", "")
+			global_temp_plugin_c_info_path = DIR + temp_plugin_commit_info_path.replace("res://", "")
+			global_plugin_dir = DIR + plugin_dir.replace("res://", "")
+		
+		var already_installed = false
 		# Download the plugin commit info
-		$GithubHTTPRequest.download_file = plugin_commit_info_path
-		plugin_download = true
-		if FileAccess.file_exists(plugin_commit_info_path): # If the plugin is already installed, download the new commit info to a temp file and check if an update is required
-			if DirAccess.dir_exists_absolute("res://repositories/" + plugin["repo"].replace("/", "_")+plugin["dir_suffix"]):
-				$GithubHTTPRequest.download_file = temp_plugin_commit_info_path
+		$GithubHTTPRequest.download_file = global_plugin_c_info_path
+		if FileAccess.file_exists(global_plugin_c_info_path): # If the plugin is already installed, download the new commit info to a temp file and check if an update is required
+			if DirAccess.dir_exists_absolute(global_plugin_dir):
+				$GithubHTTPRequest.download_file = global_temp_plugin_c_info_path
+				already_installed = true
 		await $GithubHTTPRequest/OffsetTimer.timeout
 		$GithubHTTPRequest.request(plugin_repo_api_url)
 		await $GithubHTTPRequest.request_completed
-		if FileAccess.file_exists(plugin_commit_info_path): # If the plugin is already installed, download the new commit info to a temp file and check if an update is required
-			if DirAccess.dir_exists_absolute("res://repositories/" + plugin["repo"].replace("/", "_")+plugin["dir_suffix"]):
-				# Load the commit info from the file
-				var new_plugin_commit_info = JSON.parse_string(FileAccess.open(temp_plugin_commit_info_path, FileAccess.READ).get_as_text())[0]
-				var old_plugin_commit_info = JSON.parse_string(FileAccess.open(plugin_commit_info_path, FileAccess.READ).get_as_text())[0]
-				if old_plugin_commit_info["sha"] != new_plugin_commit_info["sha"]: # If the plugin is not up to date flag it for download
-					print("New plugin commit found - Overwriting old commit info")
-					# Replace the old commit info with the new commit info
-					OS.move_to_trash(plugin_commit_info_path)
-					if !OS.has_feature("standalone"):
-						plugin_commit_info_path = ProjectSettings.globalize_path(plugin_commit_info_path)
-						temp_plugin_commit_info_path = ProjectSettings.globalize_path(temp_plugin_commit_info_path)
-					else:
-						plugin_commit_info_path = DIR + plugin_commit_info_path.replace("res://", "")
-						temp_plugin_commit_info_path = DIR + temp_plugin_commit_info_path.replace("res://", "")
-					var command2 = [
-						"Move-Item",
-						"\"\"" + temp_plugin_commit_info_path.replace(" ","' '") + "\"\"",
-						"\"\"" + plugin_commit_info_path.replace(" ","' '") + "\"\""
-					]
-					
-					# copy commit history
-					print("Executing command in powershell: " + " ".join(command2))
-					var output2 = []
-					OS.execute("powershell.exe", command2, output2, true)
-					print("Output: " + " ".join(output2))
-					# OS.execute("mv", [, ])
-				else: # Remove the temp commit info if the plugin is already up to date
-					OS.move_to_trash(temp_plugin_commit_info_path)
-					plugin_download = false
+		if already_installed:
+			# Load the commit info from the file
+			var new_plugin_commit_info = JSON.parse_string(FileAccess.open(global_temp_plugin_c_info_path, FileAccess.READ).get_as_text())
+			if new_plugin_commit_info is Array:
+				new_plugin_commit_info = new_plugin_commit_info[0]
+			else:
+				print("Error: Unexpected JSON format (You're probably ratelimited! Try to update again later!")
+				return
+			var old_plugin_commit_info = JSON.parse_string(FileAccess.open(global_plugin_c_info_path, FileAccess.READ).get_as_text())[0]
+			if old_plugin_commit_info["sha"] != new_plugin_commit_info["sha"]: # If the plugin is not up to date flag it for download
+				print("New "+repo["name"]+"[" + plugin["name"] + "] plugin commit found - Overwriting old commit info: new" + new_plugin_commit_info["sha"] + " vs old" + old_plugin_commit_info["sha"])
+				# Replace the old commit info with the new commit info
+				OS.move_to_trash(global_plugin_c_info_path)
+				var command2 = [
+					"Move-Item",
+					"\"\"" + global_temp_plugin_c_info_path.replace(" ","' '") + "\"\"",
+					"\"\"" + global_plugin_c_info_path.replace(" ","' '") + "\"\""
+				]
+				# copy commit history
+				print("Executing command in powershell: " + " ".join(command2))
+				var output2 = []
+				OS.execute("powershell.exe", command2, output2, true)
+				print("Output: " + " ".join(output2))
+				# OS.execute("mv", [, ])
+			else: # Remove the temp commit info if the plugin is already up to date
+				OS.move_to_trash(global_temp_plugin_c_info_path)
+				plugin_download = false
 			
 		if plugin_download: # If the plugin is flagged for download, download it
 			var plugin_url = "https://github.com/" + plugin["repo"] + "/archive/refs/heads/" + plugin["branch"] + ".zip"
@@ -365,6 +485,8 @@ func _ready():
 		temp_path = ProjectSettings.globalize_path(temp_path)
 	else:
 		temp_path = DIR + temp_path.replace("res://", "")
+	if repo["dir_suffix"] != "":
+		repo_dir = "res://repositories/" + repo["repo"].replace("/", "_") + repo["dir_suffix"]
 	if !OS.has_feature("standalone"):
 		repo_dir = ProjectSettings.globalize_path(repo_dir)
 	else:
@@ -388,13 +510,13 @@ func _start_repo():
 	# 		button.disabled = true
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = false
 	
-	var wd = watchdog
+	var watchdawg = watchdog
 	if root.settings["crash_recovery"] != true:
-		wd = false
+		watchdawg = false
 	if repo["dir_suffix"] != "":
-		PID = python.run_script(repo["python_binary"], script_path, ["\""+repo['repo']+"\"", "-dir_suffice", "\""+repo["dir_suffix"]+"\""], root.settings["debug_console"], wd)
+		PID = python.run_script(repo["python_binary"], script_path, ["\""+repo['repo']+"\"", "-dir_suffice", "\""+repo["dir_suffix"]+"\""], root.settings["debug_console"], watchdawg)
 	else:
-		PID = python.run_script(repo["python_binary"], script_path, ["\""+repo['repo']+"\""], root.settings["debug_console"], wd)
+		PID = python.run_script(repo["python_binary"], script_path, ["\""+repo['repo']+"\""], root.settings["debug_console"], watchdawg)
 	active = true
 	print("Started repo")
 
@@ -443,6 +565,7 @@ func save_repo():
 func _on_repo_download_finished():
 	populate_plugins_list()
 	$RepoPanel/VBoxContainer/HBoxContainer/Controls/Start.visible = true
+	ui.is_downloading = false
 	status_bar.text = "Finished downloading " + repo["name"] + ", please configure the repo and start it"
 
 

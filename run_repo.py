@@ -75,6 +75,31 @@ try:
             repo_json['entry_point'],
         ] + repo_json["args"]
         launcher_logging.info(sys.argv)
+        import sys
+        sys.dont_write_bytecode = True
+
+        python_path = repo_json.get("python_binary", python_path)
+        if "-3.11.6-" in python_path:
+            # Fix PyTorch DLL loading issue on Windows for Python 3.11 https://github.com/pytorch/pytorch/issues/166628
+            # You need to add this at the beginning, before importing torch and other conflicting modules
+            import os
+            import platform
+            if platform.system() == "Windows":
+                import ctypes
+                import site
+
+                for site_path in site.getsitepackages():
+                    torch_lib_path = os.path.join(site_path, "torch", "lib")
+                    if os.path.exists(torch_lib_path):
+                        # Pre-load torch DLLs
+                        for dll in ['c10.dll', 'torch_cpu.dll', 'torch_python.dll']:
+                            dll_path = os.path.join(torch_lib_path, dll)
+                            if os.path.exists(dll_path):
+                                try:
+                                    ctypes.CDLL(dll_path)
+                                except Exception:
+                                    pass
+                        break
 
 
         # Start the repository by running whatever entry point is specified to be as a cmd line arg
