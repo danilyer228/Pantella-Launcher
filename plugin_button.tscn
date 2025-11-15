@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://bushnesgcipkr"]
 
-[ext_resource type="Script" path="res://plugin_button.gd" id="1_6bq5e"]
+[ext_resource type="Script" uid="uid://d2y11nj8k00u7" path="res://plugin_button.gd" id="1_6bq5e"]
 [ext_resource type="StyleBox" uid="uid://8ougcqv66tu6" path="res://skybox.tres" id="1_pfrfa"]
-[ext_resource type="Script" path="res://ModManagerIcon.gd" id="3_kajsx"]
-[ext_resource type="Script" path="res://GameIcon.gd" id="5_tvsoy"]
+[ext_resource type="Script" uid="uid://2c58joad4xtq" path="res://ModManagerIcon.gd" id="3_kajsx"]
+[ext_resource type="Script" uid="uid://sn58gsy54sx0" path="res://GameIcon.gd" id="5_tvsoy"]
 
 [node name="PluginButton" type="Panel" groups=["plugin"]]
 custom_minimum_size = Vector2(800, 95.47)

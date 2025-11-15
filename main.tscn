@@ -1,25 +1,25 @@
 [gd_scene load_steps=25 format=3 uid="uid://dsxwane2oefu"]
 
 [ext_resource type="PackedScene" uid="uid://dh5ipu2051dw5" path="res://python_interpreter.tscn" id="1_sjw5x"]
-[ext_resource type="Script" path="res://main.gd" id="1_y3wta"]
-[ext_resource type="Script" path="res://repos.gd" id="3_0uige"]
+[ext_resource type="Script" uid="uid://cebrir6766f7j" path="res://main.gd" id="1_y3wta"]
+[ext_resource type="Script" uid="uid://bsqhar7c5vhib" path="res://repos.gd" id="3_0uige"]
 [ext_resource type="Texture2D" uid="uid://c7m523s77v86y" path="res://assets/ML_background.png" id="3_3ji7s"]
-[ext_resource type="Script" path="res://UI.gd" id="4_jqugb"]
+[ext_resource type="Script" uid="uid://3pm0n0hsrlkh" path="res://UI.gd" id="4_jqugb"]
 [ext_resource type="StyleBox" uid="uid://8ougcqv66tu6" path="res://skybox.tres" id="4_uhq8h"]
 [ext_resource type="Texture2D" uid="uid://cldllqgdagd54" path="res://assets/spinner.png" id="6_g01my"]
-[ext_resource type="Script" path="res://PluginDirDialog.gd" id="6_sqx30"]
-[ext_resource type="Script" path="res://CrashCheckBox.gd" id="7_4aa5k"]
+[ext_resource type="Script" uid="uid://ctbk0b5x4iv3f" path="res://PluginDirDialog.gd" id="6_sqx30"]
+[ext_resource type="Script" uid="uid://dlipksfc0pybc" path="res://CrashCheckBox.gd" id="7_4aa5k"]
 [ext_resource type="Texture2D" uid="uid://dnm2jsmqg7qy" path="res://settings_icon.png" id="7_hcc80"]
-[ext_resource type="Script" path="res://Spinner.gd" id="7_un52j"]
+[ext_resource type="Script" uid="uid://nfn5snb5uawq" path="res://Spinner.gd" id="7_un52j"]
 [ext_resource type="Texture2D" uid="uid://womwtvl27gqg" path="res://assets/box.png" id="8_10np7"]
 [ext_resource type="Texture2D" uid="uid://d011etk6cx12" path="res://assets/update_icon.png" id="8_e6bob"]
-[ext_resource type="Script" path="res://DebugCheckBox.gd" id="8_jdlnm"]
-[ext_resource type="Script" path="res://SettingsButton.gd" id="9_iagd8"]
-[ext_resource type="Script" path="res://UndeployButton.gd" id="10_l243b"]
+[ext_resource type="Script" uid="uid://senr08oth5r" path="res://DebugCheckBox.gd" id="8_jdlnm"]
+[ext_resource type="Script" uid="uid://c262ypyoju4pq" path="res://SettingsButton.gd" id="9_iagd8"]
+[ext_resource type="Script" uid="uid://bryr4w6kf668c" path="res://UndeployButton.gd" id="10_l243b"]
 [ext_resource type="FontFile" uid="uid://8su8avp8yis1" path="res://Balgruf-JRye7.ttf" id="14_3k6ub"]
-[ext_resource type="Script" path="res://GamesPanel.gd" id="15_plm84"]
-[ext_resource type="Script" path="res://GameSettingsLabel.gd" id="16_fudtm"]
-[ext_resource type="Script" path="res://GamesSettings.gd" id="16_hyynm"]
+[ext_resource type="Script" uid="uid://bmddhggvi1qyl" path="res://GamesPanel.gd" id="15_plm84"]
+[ext_resource type="Script" uid="uid://wi4bchncarhm" path="res://GameSettingsLabel.gd" id="16_fudtm"]
+[ext_resource type="Script" uid="uid://bquvxqstj4fso" path="res://GamesSettings.gd" id="16_hyynm"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_oex1w"]
 texture = ExtResource("3_3ji7s")
@@ -51,8 +51,8 @@ script = ExtResource("4_jqugb")
 
 [node name="StatusBarPanel" type="Panel" parent="UI"]
 z_index = 1
-custom_minimum_size = Vector2(0, 53)
-layout_mode = 2
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 0
 anchor_right = 1.0
 offset_left = 8.0
 offset_top = 8.0
@@ -66,10 +66,10 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.057
-offset_left = 24.0
-offset_top = 8.0
-offset_right = -24.0
-offset_bottom = -12.021
+offset_left = 23.0
+offset_top = 10.0
+offset_right = -25.0
+offset_bottom = -12.135002
 alignment = 2
 
 [node name="Spinner" type="TextureRect" parent="UI/StatusBarPanel/Hotbar"]
@@ -126,7 +126,7 @@ anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
-offset_top = 64.0
+offset_top = 62.0
 offset_right = -8.0
 offset_bottom = -8.0
 grow_horizontal = 2
@@ -149,6 +149,7 @@ script = ExtResource("3_0uige")
 layout_mode = 2
 
 [node name="Settings" type="Control" parent="UI"]
+visible = false
 z_index = 2
 layout_mode = 1
 anchors_preset = 15
@@ -333,13 +334,16 @@ text = "CLOSE SETTINGS"
 layout_mode = 2
 
 [node name="Label" type="Label" parent="UI/Settings/Panel/Control"]
+self_modulate = Color(1, 1, 1, 0.509804)
 layout_mode = 1
-anchors_preset = 2
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -31.9999
-offset_right = 88.0
-offset_bottom = -7.99994
+offset_left = -93.0
+offset_top = -23.9999
+grow_horizontal = 0
 grow_vertical = 0
 text = "v0.0.6 alpha"
 
