@@ -7,7 +7,7 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	# Rotate the sprite
 	pivot_offset = size / 2 - Vector2(1, 1)
 	rotation += 0.1
