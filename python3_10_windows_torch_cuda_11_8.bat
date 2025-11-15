@@ -15,6 +15,6 @@ if "%CUDA_VERSION%"=="" (
 ) else (
     echo CUDA Version: %CUDA_VERSION%
     echo Reinstalling torch with CUDA support
-    "%~dp0\python-3.10.11-embed\python.exe" -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 --no-deps --no-cache-dir --force-reinstall --upgrade
+    "%~dp0\python-3.10.11-embed\python.exe" -m pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu118 --no-deps --no-cache-dir --force-reinstall --upgrade
     echo Done
 )
