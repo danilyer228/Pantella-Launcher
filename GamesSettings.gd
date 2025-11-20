@@ -49,31 +49,14 @@ func _ready():
 			if file_name.ends_with(".json"):
 				var file = FileAccess.open(game_configs_dir + file_name, FileAccess.READ)
 				if file:
-					var json = JSON.parse_string(file.get_as_text())
-					print(json)
+					var game_config = JSON.parse_string(file.get_as_text())
+					print(game_config)
 					file.close()
-					json["file_name"] = str(file_name)
-					game_configs.append(json)
+					game_config["file_name"] = str(file_name)
+					game_config["slug"] = game_config["file_name"].replace(".json", "")
+					game_configs.append(game_config)
 			file_name = game_configs_dir_access.get_next()
-	for game_config in game_configs:
-		game_config["slug"] = game_config["file_name"].replace(".json", "")
-		var game_settings_panel_instance = game_settings_panel.instantiate()
-		var game_toggle = CheckButton.new()
-		# Set the game icon
-		if game_icon_textures.has(game_config["slug"]):
-			game_settings_panel_instance.get_node("TextureRect").texture = game_icon_textures[game_config["slug"]]
-			game_settings_panel_instance.game = game_config
-		game_toggle.text = game_config["title"]
-		game_toggle.size_flags_horizontal = 4
-		game_toggle.pressed.connect(game_settings_panel_instance.toggle_visibility)
-		game_settings_panel_instance.get_node("Title").text = game_config["title"]
-		game_settings_panel_instance.visible = false
-		add_child(game_settings_panel_instance)
-		game_toggle.pressed.connect(label._on_game_visiblity_changed)
-		game_toggle.pressed.connect($"../.."._on_settings_resized)
-		if game_config["mod_organizer_path"] != "" or game_config["mod_organizer_type"] != "":
-			game_toggle.button_pressed = true
-		game_toggles.add_child(game_toggle)
+	load_configs()
 		
 	# Load the mod manager icons
 	var mo2_path = "res://assets/mo2.png"
@@ -88,3 +71,24 @@ func _ready():
 	mod_manager_icon_textures["vortex"] = ImageTexture.create_from_image(Image.load_from_file(vortex_path))
 	
 	games_loaded.emit()
+
+func load_configs():
+	for game_config in game_configs:
+		var game_settings_panel_instance = game_settings_panel.instantiate()
+		# Set the game icon
+		if game_icon_textures.has(game_config["slug"]):
+			game_settings_panel_instance.get_node("TextureRect").texture = game_icon_textures[game_config["slug"]]
+			game_settings_panel_instance.game = game_config
+		game_settings_panel_instance.get_node("Title").text = game_config["title"]
+		game_settings_panel_instance.visible = false
+		add_child(game_settings_panel_instance)
+
+		var game_toggle = CheckButton.new()
+		game_toggle.text = game_config["title"]
+		game_toggle.size_flags_horizontal = 4
+		game_toggle.pressed.connect(game_settings_panel_instance.toggle_visibility)
+		game_toggle.pressed.connect(label._on_game_visiblity_changed)
+		game_toggle.pressed.connect($"../.."._on_settings_resized)
+		if game_config["mod_organizer_path"] != "" or game_config["mod_organizer_type"] != "":
+			game_toggle.button_pressed = true
+		game_toggles.add_child(game_toggle)

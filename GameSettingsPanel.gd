@@ -67,6 +67,7 @@ func save_changes():
 	var file = FileAccess.open(json_path, FileAccess.WRITE)
 	file.store_string(JSON.stringify(game, "\t"))
 	file.close()
+	update_repos()
 
 func _on_v_box_container_resized():
 	custom_minimum_size.y = $VBoxContainer.size.y + 105
@@ -81,3 +82,9 @@ func _on_clear_button_pressed():
 	game["mod_organizer_type"] = ""
 	game["mod_organizer_path"] = ""
 	save_changes()
+
+func update_repos():
+	var repos = get_tree().get_nodes_in_group("repository")
+	for repo in repos:
+		print("populate_plugins_list-ing repo: " + repo.repo["name"])
+		repo.populate_plugins_list()
