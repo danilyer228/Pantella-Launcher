@@ -57,7 +57,7 @@ func apply_repo(json):
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Info/Repo").text = repo["repo"]
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Info/Desc").text = repo["description"]
 	watchdog = repo["watchdog"]
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		repositories_dir = ProjectSettings.globalize_path(repositories_dir)
 	else:
 		repositories_dir = DIR + repositories_dir.replace("res://", "")
@@ -92,7 +92,7 @@ func check_for_updates(force=false):
 		return
 	var old_commit_info_path = "res://install_info/" + repo["repo"].replace("/", "_") + repo["dir_suffix"] + ".json"
 	var global_oc_info_path = null
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		global_oc_info_path = ProjectSettings.globalize_path(old_commit_info_path)
 	else:
 		global_oc_info_path = DIR + old_commit_info_path.replace("res://", "")
@@ -102,7 +102,7 @@ func check_for_updates(force=false):
 		var repo_api_url = "https://api.github.com/repos/" + repo["repo"] + "/commits"
 		var new_commit_info_path = "res://temp/" + repo["repo"].replace("/", "_") + repo["dir_suffix"] + ".json"
 		var global_new_commit_info_path = null
-		if !OS.has_feature("standalone"):
+		if OS.has_feature("editor"):
 			global_new_commit_info_path = ProjectSettings.globalize_path(new_commit_info_path)
 		else:
 			global_new_commit_info_path = DIR + new_commit_info_path.replace("res://", "")
@@ -150,7 +150,7 @@ func check_for_updates(force=false):
 				var global_old_plugin_commit_info_path = null
 				var global_new_plugin_commit_info_path = null
 				var global_plugin_dir = null
-				if !OS.has_feature("standalone"):
+				if OS.has_feature("editor"):
 					global_old_plugin_commit_info_path = ProjectSettings.globalize_path(old_plugin_commit_info_path)
 					global_new_plugin_commit_info_path = ProjectSettings.globalize_path(new_plugin_commit_info_path)
 					global_plugin_dir = ProjectSettings.globalize_path(plugin_dir)
@@ -237,7 +237,7 @@ func download_repo():
 	# Globalize
 	var global_c_info_path = null
 	var global_temp_c_info_path = null
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		global_c_info_path = ProjectSettings.globalize_path(commit_info_path)
 		global_temp_c_info_path = ProjectSettings.globalize_path(temp_commit_info_path)
 	else:
@@ -359,7 +359,7 @@ func download_repo():
 		var global_plugin_c_info_path = null
 		var global_temp_plugin_c_info_path = null
 		var global_plugin_dir = null
-		if !OS.has_feature("standalone"):
+		if OS.has_feature("editor"):
 			global_plugin_c_info_path = ProjectSettings.globalize_path(plugin_commit_info_path)
 			global_temp_plugin_c_info_path = ProjectSettings.globalize_path(temp_plugin_commit_info_path)
 			global_plugin_dir = ProjectSettings.globalize_path(plugin_dir)
@@ -439,7 +439,7 @@ func download_completed(_status, _body, _headers, _code):
 	print(current_download)
 	# Check if repo directory exists, if not create it
 	var zip_path = http_request.download_file # "res://temp/" + repo["repo"].replace("/", "_") + ".zip"
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		zip_path = ProjectSettings.globalize_path(zip_path)
 	else:
 		zip_path = DIR + zip_path.replace("res://", "")
@@ -481,13 +481,13 @@ func download_completed(_status, _body, _headers, _code):
 	print("Extracted zip")
 
 func _ready():
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		temp_path = ProjectSettings.globalize_path(temp_path)
 	else:
 		temp_path = DIR + temp_path.replace("res://", "")
 	if repo["dir_suffix"] != "":
 		repo_dir = "res://repositories/" + repo["repo"].replace("/", "_") + repo["dir_suffix"]
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		repo_dir = ProjectSettings.globalize_path(repo_dir)
 	else:
 		repo_dir = DIR + repo_dir.replace("res://", "")
@@ -554,7 +554,7 @@ func _stop_repo():
 
 func save_repo():
 	var file_path = "res://repo_configs/"+repo["file_name"]
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		file_path = ProjectSettings.globalize_path(file_path)
 	else:
 		file_path = DIR + file_path.replace("res://", "")

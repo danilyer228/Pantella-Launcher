@@ -49,12 +49,12 @@ func _ready():
 			else:
 				plugin_path = mod_organizer_path + "/"
 			source_path = "res://repositories/" + plugin["repo"].replace("/", "_")
-			if !OS.has_feature("standalone"):
+			if OS.has_feature("editor"):
 				source_path = ProjectSettings.globalize_path(source_path)
 			else:
 				source_path = DIR + source_path.replace("res://", "")
 			plugin_commit_history_path = "res://install_info/" + plugin["repo"].replace("/", "_") + ".json"
-			if !OS.has_feature("standalone"):
+			if OS.has_feature("editor"):
 				plugin_commit_history_path = ProjectSettings.globalize_path(plugin_commit_history_path)
 			else:
 				plugin_commit_history_path = DIR + plugin_commit_history_path.replace("res://", "")
@@ -85,7 +85,7 @@ func _on_plugin_active():
 # 	OS.execute("powershell.exe", ["Copy-Item", "\""+plugin_commit_history_path.replace(" ","' '")+"\"", "\""+str(plugin_path+plugin["repo"].replace("/", "_")).replace(" ","' '")+"/commit_history.json"+"\""])
 # 	for patch in plugin["patches"]: # Extract patches from res://plugin_patches/{patch} to the plugin folder
 # 		var patch_path = "res://plugin_patches/" + patch
-# 		if !OS.has_feature("standalone"):
+# 		if OS.has_feature("editor"):
 # 			patch_path = ProjectSettings.globalize_path(patch_path)
 # 		else:
 # 			patch_path = DIR + patch_path.replace("res://", "")
@@ -127,7 +127,7 @@ func _on_install_button_pressed():
 	
 	for patch in plugin["patches"]: # Extract patches from res://plugin_patches/{patch} to the plugin folder
 		var patch_path = "res://plugin_patches/" + patch
-		if !OS.has_feature("standalone"):
+		if OS.has_feature("editor"):
 			patch_path = ProjectSettings.globalize_path(patch_path)
 		else:
 			patch_path = DIR + patch_path.replace("res://", "")

@@ -59,7 +59,7 @@ func toggle_visibility():
 func save_changes():
 	print(game)
 	var json_path = "res://game_configs/" + game.file_name
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		json_path = ProjectSettings.globalize_path(json_path)
 	else:
 		json_path = DIR + json_path.replace("res://", "")

@@ -17,15 +17,11 @@ var mod_manager_icon_textures = {}
 signal games_loaded
 
 func _ready():
-	if !OS.has_feature("standalone"):
-		game_configs_dir = ProjectSettings.globalize_path(game_configs_dir)
-	else:
-		game_configs_dir = DIR + game_configs_dir.replace("res://", "")
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		game_icons_dir = ProjectSettings.globalize_path(game_icons_dir)
 	else:
 		game_icons_dir = DIR + game_icons_dir.replace("res://", "")
-	print(game_configs_dir)
+	print("game_icons_dir:",game_icons_dir)
 	# For each file in the game_icons_dir load the texture
 	var game_icons_dir_access = DirAccess.open(game_icons_dir)
 	if game_icons_dir_access:
@@ -33,12 +29,16 @@ func _ready():
 		var file_name = game_icons_dir_access.get_next()
 		while file_name != "":
 			if file_name.ends_with(".png"):
-				game_icon_textures_filename.append(file_name)
+				var image = Image.load_from_file(game_icons_dir + file_name)
+				var texture = ImageTexture.create_from_image(image)
+				game_icon_textures[file_name.replace(".png", "")] = texture
 			file_name = game_icons_dir_access.get_next()
-	for game_icon_texture in game_icon_textures_filename:
-		var image = Image.load_from_file(game_icons_dir + game_icon_texture)
-		var texture = ImageTexture.create_from_image(image)
-		game_icon_textures[game_icon_texture.replace(".png", "")] = texture
+
+	if OS.has_feature("editor"):
+		game_configs_dir = ProjectSettings.globalize_path(game_configs_dir)
+	else:
+		game_configs_dir = DIR + game_configs_dir.replace("res://", "")
+	print("game_configs_dir:",game_configs_dir)
 	# For each file in the game_configs_dir
 	var game_configs_dir_access = DirAccess.open(game_configs_dir)
 	if game_configs_dir_access:

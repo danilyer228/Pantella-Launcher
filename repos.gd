@@ -7,7 +7,7 @@ var repos = []
 @onready var repo_button = preload("res://repository.tscn")
 
 func _on_root_settings_loaded():
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		repos_dir = ProjectSettings.globalize_path(repos_dir)
 	else:
 		repos_dir = DIR + repos_dir.replace("res://", "")

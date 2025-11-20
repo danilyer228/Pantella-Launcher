@@ -20,7 +20,7 @@ signal interpreter_ready
 
 func _ready():
 	# Delete log.txt on startup
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		interpreter_path = ProjectSettings.globalize_path("res://python-3.10.11-embed/python.exe")
 	else:
 		interpreter_path = DIR + "python-3.10.11-embed/python.exe"
@@ -32,14 +32,14 @@ func run_script(python_binary, script_path, script_args=[], console=true, watchd
 		if python_binary.begins_with("./") or python_binary.begins_with(".\\"):
 			python_binary = python_binary.replace("./", "")
 			python_binary = python_binary.replace(".\\", "")
-		if !OS.has_feature("standalone"):
+		if OS.has_feature("editor"):
 			python_binary = ProjectSettings.globalize_path("res://" + python_binary)
 		else:
 			python_binary = DIR + python_binary
 	else:
 		python_binary = interpreter_path
 	print("Running Python script: " + script_path)
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		script_path = ProjectSettings.globalize_path("res://" + script_path)
 	else:
 		script_path = DIR + script_path
@@ -75,7 +75,7 @@ func run_script_from_dir(dir, script_path, console=true, watchdog=false):
 
 func execute_script(script_path):
 	print("Executing Python script: " + script_path)
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		script_path = ProjectSettings.globalize_path("res://" + script_path)
 	else:
 		script_path = DIR + script_path

@@ -38,15 +38,15 @@ func save_settings():
 	file.close()
 
 func _ready():
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		repositories_dir = ProjectSettings.globalize_path(repositories_dir)
 	else:
 		repositories_dir = DIR + repositories_dir.replace("res://", "")
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		temp_dir = ProjectSettings.globalize_path(temp_dir)
 	else:
 		temp_dir = DIR + temp_dir.replace("res://", "")
-	if !OS.has_feature("standalone"):
+	if OS.has_feature("editor"):
 		settings_file = ProjectSettings.globalize_path(settings_file)
 	else:
 		settings_file = DIR + settings_file.replace("res://", "")
