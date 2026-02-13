@@ -209,6 +209,7 @@ func populate_plugins_list():
 	# Add the plugins
 	if installed:
 		for plugin in repo["plugins"]:
+			# var should_be_downloaded = false
 			for game in plugin["games"]:
 				print("Adding plugin for " + game + " | " + plugin["repo"] + " | to " + repo["name"])
 				var button = plugins_button.instantiate()
@@ -216,6 +217,11 @@ func populate_plugins_list():
 				button.game = game
 				button.repo = self
 				plugins_list.add_child(button)
+				# should_be_downloaded = true
+			# if should_be_downloaded:
+			# 	print("Plugin " + plugin["name"] + " should be downloaded")
+			# 	download_plugin(plugin)
+			
 
 func download_repo():
 	print("Downloading latest repo")
@@ -344,6 +350,7 @@ func download_repo():
 	# Download related plugins
 	status_bar.text = "Downloading " + repo["name"] + " Plugins..."
 	for plugin in repo["plugins"]:
+		print("Downloading plugin: " + plugin["name"])
 		var plugin_download = true
 		
 		var plugin_repo_api_url = "https://api.github.com/repos/" + plugin["repo"] + "/commits"
@@ -432,53 +439,88 @@ func download_repo():
 	root.hide_spinner()
 	repo_download_finished.emit()
 
-func download_completed(_status, _body, _headers, _code):
-	print("Download completed")
-	status_bar.text = "Downloaded " + current_download["repo"] + "[" + current_download["branch"] + "], extracting..."
-	print(http_request.download_file)
-	print(current_download)
-	# Check if repo directory exists, if not create it
-	var zip_path = http_request.download_file # "res://temp/" + repo["repo"].replace("/", "_") + ".zip"
-	if OS.has_feature("editor"):
-		zip_path = ProjectSettings.globalize_path(zip_path)
-	else:
-		zip_path = DIR + zip_path.replace("res://", "")
-	var main_dir = temp_path + current_download["repo"].split("/")[1]+"-" + current_download["branch"] + "/*"
-	if current_download["commit"] != "":
-		main_dir = temp_path + current_download["repo"].split("/")[1]+"-" + current_download["commit"] + "/*"
-	var output_dir = repositories_dir + current_download["repo"].replace("/", "_")
-	if current_download["dir_suffix"] != "":
-		output_dir += current_download["dir_suffix"]
-	print(temp_path)
-	print(zip_path)
-	print(main_dir)
-	print(output_dir)
-	
-	# Clear everything but the filenames in repo["blacklist"] from the repo directory
-	if installed:
-		var dir_access = DirAccess.open(output_dir)
-		if dir_access:
-			dir_access.list_dir_begin()
-			while true:
-				var file = dir_access.get_next()
-				if file == "":
-					break
-				if file in repo["blacklist"]:
-					continue
-				OS.move_to_trash(output_dir + "/" + file)
+func download_completed(result, response_code, headers, body):
+	print("Download completed with result: " + str(result) + " and response code: " + str(response_code))
+	if result == HTTPRequest.RESULT_SUCCESS:
+		print("Download completed")
+		status_bar.text = "Downloaded " + current_download["repo"] + "[" + current_download["branch"] + "], extracting..."
+		print(http_request.download_file)
+		print(current_download)
+		# Check if repo directory exists, if not create it
+		var zip_path = http_request.download_file # "res://temp/" + repo["repo"].replace("/", "_") + ".zip"
+		if OS.has_feature("editor"):
+			zip_path = ProjectSettings.globalize_path(zip_path)
+		else:
+			zip_path = DIR + zip_path.replace("res://", "")
+		var main_dir = temp_path + current_download["repo"].split("/")[1]+"-" + current_download["branch"] + "/*"
+		if current_download["commit"] != "":
+			main_dir = temp_path + current_download["repo"].split("/")[1]+"-" + current_download["commit"] + "/*"
+		var output_dir = repositories_dir + current_download["repo"].replace("/", "_")
+		if current_download["dir_suffix"] != "":
+			output_dir += current_download["dir_suffix"]
+		print(temp_path)
+		print(zip_path)
+		print(main_dir)
+		print(output_dir)
+		
+		# Clear everything but the filenames in repo["blacklist"] from the repo directory
+		if installed:
+			var dir_access = DirAccess.open(output_dir)
+			if dir_access:
+				dir_access.list_dir_begin()
+				while true:
+					var file = dir_access.get_next()
+					if file == "":
+						break
+					if file in repo["blacklist"]:
+						continue
+					OS.move_to_trash(output_dir + "/" + file)
+			else:
+				DirAccess.make_dir_absolute(output_dir)
 		else:
 			DirAccess.make_dir_absolute(output_dir)
-	else:
-		DirAccess.make_dir_absolute(output_dir)
 
-	OS.execute("tar", ["-xf", zip_path, "-C", temp_path]) # Extract the downloaded zip to the temp directory
-	OS.execute("powershell.exe", ["mv", "\""+main_dir.replace(" ","' '")+"\"", "\""+output_dir.replace(" ","' '")+"\""]) # Move the contents of the temp directory to the repo directory
-	# Remove the temp directory
-	OS.move_to_trash(main_dir.replace("/*", ""))
-	OS.move_to_trash(zip_path)
-	status_bar.text = "Extracted " + current_download["name"] + "..."
-	download_extracted.emit()
-	print("Extracted zip")
+		OS.execute("tar", ["-xf", zip_path, "-C", temp_path]) # Extract the downloaded zip to the temp directory
+		OS.execute("powershell.exe", ["mv", "\""+main_dir.replace(" ","' '")+"\"", "\""+output_dir.replace(" ","' '")+"\""]) # Move the contents of the temp directory to the repo directory
+		# Remove the temp directory
+		OS.move_to_trash(main_dir.replace("/*", ""))
+		OS.move_to_trash(zip_path)
+		status_bar.text = "Extracted " + current_download["name"] + "..."
+		download_extracted.emit()
+		print("Extracted zip")
+	else:
+		print("Download failed with status: " + str(result))
+		status_bar.text = "Failed to download " + current_download["name"] + ": "+ str(result)
+		var buttons = get_tree().get_nodes_in_group("download_buttons")
+		for button in buttons:
+			button.disabled = false
+		get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").text = "Download"
+		get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = true
+		# Delete the partially downloaded file
+		var zip_path = http_request.download_file
+		if OS.has_feature("editor"):
+			zip_path = ProjectSettings.globalize_path(zip_path)
+		else:
+			zip_path = DIR + zip_path.replace("res://", "")
+		if FileAccess.file_exists(zip_path):
+			OS.move_to_trash(zip_path)
+		# Download with curl as fallback if the download failed and we're not in the editor
+		print("Attempting to download with curl as fallback")
+		var repo_url = $GithubHTTPRequest.url
+		if repo_url != "":
+			var curl_command = ["curl", "-L", repo_url, "-o", zip_path]
+			print("Executing command: " + " ".join(curl_command))
+			var output = []
+			OS.execute(curl_command[0], curl_command.slice(1), output, true)
+			print("Output: " + " ".join(output))
+			if FileAccess.file_exists(zip_path):
+				print("Download with curl successful, proceeding with extraction")
+				download_completed(HTTPRequest.RESULT_SUCCESS, "", [], 200)
+			else:
+				print("Download with curl failed")
+				status_bar.text = "Failed to download " + current_download["name"] + " with curl fallback"
+		else:
+			print("No URL found for download fallback")
 
 func _ready():
 	if OS.has_feature("editor"):
@@ -514,9 +556,9 @@ func _start_repo():
 	if root.settings["crash_recovery"] != true:
 		watchdawg = false
 	if repo["dir_suffix"] != "":
-		PID = python.run_script(repo["python_binary"], script_path, ["\""+repo['repo']+"\"", "-dir_suffice", "\""+repo["dir_suffix"]+"\""], root.settings["debug_console"], watchdawg)
+		PID = python.run_script(repo["python_binary"], script_path, [repo['repo'], "--dir_suffix", repo["dir_suffix"]], root.settings["debug_console"], watchdawg)
 	else:
-		PID = python.run_script(repo["python_binary"], script_path, ["\""+repo['repo']+"\""], root.settings["debug_console"], watchdawg)
+		PID = python.run_script(repo["python_binary"], script_path, [repo['repo']], root.settings["debug_console"], watchdawg)
 	active = true
 	print("Started repo")
 

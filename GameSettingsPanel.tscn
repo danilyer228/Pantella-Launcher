@@ -1,13 +1,13 @@
-[gd_scene load_steps=11 format=3 uid="uid://b52giofq21xm1"]
+[gd_scene format=3 uid="uid://b52giofq21xm1"]
 
 [ext_resource type="StyleBox" uid="uid://8ougcqv66tu6" path="res://skybox.tres" id="1_02d6f"]
-[ext_resource type="Script" path="res://GameSettingsPanel.gd" id="2_ugaug"]
+[ext_resource type="Script" uid="uid://wa4b751ry6qa" path="res://GameSettingsPanel.gd" id="2_ugaug"]
 [ext_resource type="Texture2D" uid="uid://yan50c0vujvq" path="res://game_icons/skyrim.png" id="3_gprkm"]
-[ext_resource type="Script" path="res://GameDirectoryDialog.gd" id="4_3myh7"]
+[ext_resource type="Script" uid="uid://c6fbvtyeqndy6" path="res://GameDirectoryDialog.gd" id="4_3myh7"]
 [ext_resource type="Texture2D" uid="uid://bqcoi3fl2wk4w" path="res://assets/vortex-logomark.png" id="4_fg335"]
 [ext_resource type="Texture2D" uid="uid://b5i3pe8873xgv" path="res://assets/mo2.png" id="5_yc44h"]
 [ext_resource type="Texture2D" uid="uid://dyc8lfaepludj" path="res://assets/folder.png" id="6_f8rr4"]
-[ext_resource type="Script" path="res://ModManagerDirectoryDialog.gd" id="8_ljtm2"]
+[ext_resource type="Script" uid="uid://cqv1yroku3acu" path="res://ModManagerDirectoryDialog.gd" id="8_ljtm2"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_qc42d"]
 font_size = 24
@@ -15,7 +15,7 @@ font_size = 24
 [sub_resource type="LabelSettings" id="LabelSettings_w6sta"]
 font_color = Color(1, 0, 0, 1)
 
-[node name="GameSettingsPanel" type="Panel" groups=["game_panel"]]
+[node name="GameSettingsPanel" type="Panel" unique_id=1386473451 groups=["game_panel"]]
 custom_minimum_size = Vector2(800, 680)
 anchors_preset = -1
 anchor_right = 0.868
@@ -27,8 +27,8 @@ size_flags_vertical = 4
 theme_override_styles/panel = ExtResource("1_02d6f")
 script = ExtResource("2_ugaug")
 
-[node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 2
+[node name="TextureRect" type="TextureRect" parent="." unique_id=763930552]
+layout_mode = 0
 anchor_left = 0.056
 anchor_top = 0.032
 anchor_right = 0.056
@@ -41,8 +41,8 @@ texture = ExtResource("3_gprkm")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="."]
-layout_mode = 2
+[node name="Title" type="Label" parent="." unique_id=2085800974]
+layout_mode = 0
 anchor_left = 0.167
 anchor_top = 0.032
 anchor_right = 0.833
@@ -56,7 +56,7 @@ label_settings = SubResource("LabelSettings_qc42d")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ClearButton" type="Button" parent="."]
+[node name="ClearButton" type="Button" parent="." unique_id=453642224]
 self_modulate = Color(1, 0, 0, 1)
 layout_mode = 1
 anchors_preset = -1
@@ -73,7 +73,7 @@ theme_override_font_sizes/font_size = 31
 text = "⌫"
 flat = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1796580482]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.056
@@ -84,7 +84,7 @@ offset_left = -0.512001
 offset_top = 64.0
 offset_right = 0.511963
 
-[node name="ModManagerLabel" type="Label" parent="VBoxContainer"]
+[node name="ModManagerLabel" type="Label" parent="VBoxContainer" unique_id=1887886435]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Mod Manager Type
@@ -92,7 +92,7 @@ text = "Mod Manager Type
 label_settings = SubResource("LabelSettings_qc42d")
 vertical_alignment = 1
 
-[node name="ModManagerOptionButton" type="OptionButton" parent="VBoxContainer"]
+[node name="ModManagerOptionButton" type="OptionButton" parent="VBoxContainer" unique_id=300112654]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 expand_icon = true
@@ -100,11 +100,12 @@ fit_to_longest_item = false
 item_count = 2
 popup/item_0/text = "Vortex"
 popup/item_0/icon = ExtResource("4_fg335")
+popup/item_0/id = 0
 popup/item_1/text = "Mod Organizer 2"
 popup/item_1/icon = ExtResource("5_yc44h")
 popup/item_1/id = 1
 
-[node name="WarningLabel2" type="Label" parent="VBoxContainer"]
+[node name="WarningLabel2" type="Label" parent="VBoxContainer" unique_id=328966551]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -113,21 +114,21 @@ label_settings = SubResource("LabelSettings_w6sta")
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="ModManagerPathLabel" type="Label" parent="VBoxContainer"]
+[node name="ModManagerPathLabel" type="Label" parent="VBoxContainer" unique_id=1780353763]
 layout_mode = 2
 text = "Mod Manager Path
 "
 label_settings = SubResource("LabelSettings_qc42d")
 vertical_alignment = 1
 
-[node name="ModManagerPathButton" type="Button" parent="VBoxContainer"]
+[node name="ModManagerPathButton" type="Button" parent="VBoxContainer" unique_id=983340747]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 icon = ExtResource("6_f8rr4")
 alignment = 0
 expand_icon = true
 
-[node name="WarningLabel3" type="Label" parent="VBoxContainer"]
+[node name="WarningLabel3" type="Label" parent="VBoxContainer" unique_id=1682420478]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -136,19 +137,19 @@ label_settings = SubResource("LabelSettings_w6sta")
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="ModOrganizer2PathExplanation" type="HBoxContainer" parent="VBoxContainer"]
+[node name="ModOrganizer2PathExplanation" type="HBoxContainer" parent="VBoxContainer" unique_id=987102468]
 visible = false
 custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/ModOrganizer2PathExplanation"]
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/ModOrganizer2PathExplanation" unique_id=713875800]
 custom_minimum_size = Vector2(75, 75)
 layout_mode = 2
 size_flags_horizontal = 0
 texture = ExtResource("5_yc44h")
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/ModOrganizer2PathExplanation"]
+[node name="Label" type="Label" parent="VBoxContainer/ModOrganizer2PathExplanation" unique_id=1848496411]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -156,19 +157,19 @@ text = "Open Mod Organizer 2 and click on the Settings Icon. Under the \"Paths\"
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="VortexPathExplanation" type="HBoxContainer" parent="VBoxContainer"]
+[node name="VortexPathExplanation" type="HBoxContainer" parent="VBoxContainer" unique_id=1513035545]
 visible = false
 custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/VortexPathExplanation"]
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/VortexPathExplanation" unique_id=1812511904]
 custom_minimum_size = Vector2(75, 75)
 layout_mode = 2
 size_flags_horizontal = 0
 texture = ExtResource("4_fg335")
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="VBoxContainer/VortexPathExplanation"]
+[node name="Label" type="Label" parent="VBoxContainer/VortexPathExplanation" unique_id=1651693703]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -177,7 +178,7 @@ E.g. If Mod Staging Folder is set to \"D:\\Vortex Mods\\{game}\" and you're tryi
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="GameDirectoryDialog" type="FileDialog" parent="."]
+[node name="GameDirectoryDialog" type="FileDialog" parent="." unique_id=1052244519]
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(794, 519)
@@ -187,7 +188,7 @@ file_mode = 2
 access = 2
 script = ExtResource("4_3myh7")
 
-[node name="ModManagerDirectoryDialog" type="FileDialog" parent="."]
+[node name="ModManagerDirectoryDialog" type="FileDialog" parent="." unique_id=1086529383]
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(794, 519)
@@ -201,7 +202,6 @@ script = ExtResource("8_ljtm2")
 [connection signal="resized" from="VBoxContainer" to="." method="_on_v_box_container_resized"]
 [connection signal="item_selected" from="VBoxContainer/ModManagerOptionButton" to="." method="_on_mod_manager_option_button_item_selected"]
 [connection signal="pressed" from="VBoxContainer/ModManagerPathButton" to="ModManagerDirectoryDialog" method="_on_game_path_button_2_pressed"]
-[connection signal="dir_selected" from="GameDirectoryDialog" to="." method="_on_game_directory_dialog_dir_selected"]
 [connection signal="dir_selected" from="GameDirectoryDialog" to="GameDirectoryDialog" method="_on_dir_selected"]
 [connection signal="dir_selected" from="ModManagerDirectoryDialog" to="." method="_on_mod_manager_directory_dialog_dir_selected"]
 [connection signal="dir_selected" from="ModManagerDirectoryDialog" to="ModManagerDirectoryDialog" method="_on_dir_selected"]

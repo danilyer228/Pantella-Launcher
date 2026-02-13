@@ -1,7 +1,7 @@
-[gd_scene load_steps=25 format=3 uid="uid://dsxwane2oefu"]
+[gd_scene format=3 uid="uid://dsxwane2oefu"]
 
 [ext_resource type="PackedScene" uid="uid://dh5ipu2051dw5" path="res://python_interpreter.tscn" id="1_sjw5x"]
-[ext_resource type="Script" uid="uid://cebrir6766f7j" path="res://main.gd" id="1_y3wta"]
+[ext_resource type="Script" uid="uid://d30md585s4ig8" path="res://main.gd" id="1_y3wta"]
 [ext_resource type="Script" uid="uid://bsqhar7c5vhib" path="res://repos.gd" id="3_0uige"]
 [ext_resource type="Texture2D" uid="uid://c7m523s77v86y" path="res://assets/ML_background.png" id="3_3ji7s"]
 [ext_resource type="Script" uid="uid://3pm0n0hsrlkh" path="res://UI.gd" id="4_jqugb"]
@@ -34,13 +34,13 @@ font_size = 40
 font = ExtResource("14_3k6ub")
 font_size = 24
 
-[node name="Root" type="Node"]
+[node name="Root" type="Node" unique_id=1708259512]
 script = ExtResource("1_y3wta")
 
-[node name="PythonInterpreter" parent="." instance=ExtResource("1_sjw5x")]
+[node name="PythonInterpreter" parent="." unique_id=591845299 instance=ExtResource("1_sjw5x")]
 watchdogable = true
 
-[node name="UI" type="Panel" parent="."]
+[node name="UI" type="Panel" parent="." unique_id=416664128]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -49,7 +49,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_oex1w")
 script = ExtResource("4_jqugb")
 
-[node name="StatusBarPanel" type="Panel" parent="UI"]
+[node name="StatusBarPanel" type="Panel" parent="UI" unique_id=1432600701]
 z_index = 1
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 0
@@ -61,7 +61,7 @@ offset_bottom = 61.0
 size_flags_vertical = 4
 theme_override_styles/panel = ExtResource("4_uhq8h")
 
-[node name="Hotbar" type="HBoxContainer" parent="UI/StatusBarPanel"]
+[node name="Hotbar" type="HBoxContainer" parent="UI/StatusBarPanel" unique_id=367701271]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -72,7 +72,7 @@ offset_right = -25.0
 offset_bottom = -12.135002
 alignment = 2
 
-[node name="Spinner" type="TextureRect" parent="UI/StatusBarPanel/Hotbar"]
+[node name="Spinner" type="TextureRect" parent="UI/StatusBarPanel/Hotbar" unique_id=755450237]
 custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -81,7 +81,7 @@ expand_mode = 1
 stretch_mode = 4
 script = ExtResource("7_un52j")
 
-[node name="StatusBar" type="Label" parent="UI/StatusBarPanel/Hotbar"]
+[node name="StatusBar" type="Label" parent="UI/StatusBarPanel/Hotbar" unique_id=1727303075]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "? Forks"
@@ -89,7 +89,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text_overrun_behavior = 4
 
-[node name="UpdateButton" type="Button" parent="UI/StatusBarPanel/Hotbar" groups=["download_buttons"]]
+[node name="UpdateButton" type="Button" parent="UI/StatusBarPanel/Hotbar" unique_id=1211844527 groups=["download_buttons"]]
 custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 tooltip_text = "Force check for updates for all repos and plugins"
@@ -99,7 +99,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="SettingsButton" type="Button" parent="UI/StatusBarPanel/Hotbar"]
+[node name="SettingsButton" type="Button" parent="UI/StatusBarPanel/Hotbar" unique_id=1793527013]
 custom_minimum_size = Vector2(36, 0)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -109,7 +109,7 @@ flat = true
 expand_icon = true
 script = ExtResource("9_iagd8")
 
-[node name="UndeployButton" type="Button" parent="UI/StatusBarPanel/Hotbar"]
+[node name="UndeployButton" type="Button" parent="UI/StatusBarPanel/Hotbar" unique_id=302209854]
 custom_minimum_size = Vector2(31, 31)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -119,7 +119,7 @@ icon = ExtResource("8_10np7")
 expand_icon = true
 script = ExtResource("10_l243b")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UI" unique_id=1022057709]
 custom_minimum_size = Vector2(700, 300)
 layout_mode = 1
 anchors_preset = -1
@@ -135,20 +135,20 @@ follow_focus = true
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/ScrollContainer" unique_id=725937021]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="repos" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+[node name="repos" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer" unique_id=827289011]
 layout_mode = 2
 script = ExtResource("3_0uige")
 
-[node name="Label2" type="Label" parent="UI/ScrollContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="UI/ScrollContainer/VBoxContainer" unique_id=341527196]
 layout_mode = 2
 
-[node name="Settings" type="Control" parent="UI"]
+[node name="Settings" type="Control" parent="UI" unique_id=998351363]
 visible = false
 z_index = 2
 layout_mode = 1
@@ -158,7 +158,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UI/Settings"]
+[node name="Panel" type="Panel" parent="UI/Settings" unique_id=882588440]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.007
@@ -172,7 +172,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = ExtResource("4_uhq8h")
 
-[node name="Control" type="Control" parent="UI/Settings/Panel"]
+[node name="Control" type="Control" parent="UI/Settings/Panel" unique_id=1517101627]
 clip_contents = true
 layout_mode = 1
 anchor_left = 0.021
@@ -186,7 +186,7 @@ offset_bottom = -0.320007
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/Settings/Panel/Control"]
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Settings/Panel/Control" unique_id=954655068]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.023
@@ -199,35 +199,35 @@ grow_vertical = 2
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer" unique_id=1182281996]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label3" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer"]
+[node name="Label3" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer" unique_id=1223588431]
 layout_mode = 2
 text = "Settings"
 label_settings = SubResource("LabelSettings_uvmp0")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer" unique_id=784108493]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=1015084634]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="Label" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=2062717449]
 layout_mode = 2
 
-[node name="Label6" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="Label6" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=824109980]
 custom_minimum_size = Vector2(242.85, 0)
 layout_mode = 2
 text = "Automatic Crash Recovery"
 
-[node name="CrashCheckBox" type="CheckBox" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label6"]
+[node name="CrashCheckBox" type="CheckBox" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label6" unique_id=1630214287]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -243,16 +243,16 @@ size_flags_horizontal = 8
 button_pressed = true
 script = ExtResource("7_4aa5k")
 
-[node name="Label2" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="Label2" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=2054572723]
 layout_mode = 2
 
-[node name="Label7" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="Label7" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=1776292729]
 layout_mode = 2
 tooltip_text = "Highly recommended so you know when it's ready, whether it's crashing, etc. But if you're confident in your setup, you can disable the console with this."
 mouse_filter = 1
 text = "Show Debug Console"
 
-[node name="DebugCheckBox" type="CheckBox" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label7"]
+[node name="DebugCheckBox" type="CheckBox" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label7" unique_id=563885279]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -268,32 +268,32 @@ size_flags_horizontal = 8
 button_pressed = true
 script = ExtResource("8_jdlnm")
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2" unique_id=1630939663]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+[node name="Label" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1642734201]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Toggle which games you want to be able to use. All settings must be filled out for a game to be considered valid to use."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="GameToggles" type="GridContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+[node name="GameToggles" type="GridContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1406085011]
 layout_mode = 2
 size_flags_horizontal = 4
 columns = 5
 
-[node name="Label4" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer"]
+[node name="Label4" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer" unique_id=737591078]
 layout_mode = 2
 
-[node name="GamesPanel" type="Panel" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer"]
+[node name="GamesPanel" type="Panel" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer" unique_id=632855265]
 custom_minimum_size = Vector2(0, 7.415)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_ak7x5")
 script = ExtResource("15_plm84")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel" unique_id=1422667070]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -304,25 +304,25 @@ offset_bottom = 19.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GameSettingsLabel" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel/VBoxContainer"]
+[node name="GameSettingsLabel" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel/VBoxContainer" unique_id=848231503]
 layout_mode = 2
 text = "Games Settings"
 label_settings = SubResource("LabelSettings_7dcc2")
 horizontal_alignment = 1
 script = ExtResource("16_fudtm")
 
-[node name="GamesSettings" type="GridContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel/VBoxContainer"]
+[node name="GamesSettings" type="GridContainer" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel/VBoxContainer" unique_id=572661917]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("16_hyynm")
 
-[node name="Label" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer" unique_id=291726027]
 layout_mode = 2
 size_flags_vertical = 10
 tooltip_text = "Click to close the settings tab. Settings are saved to file the moment they're set, not when this is clicked."
 
-[node name="CloseButton" type="Button" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer"]
+[node name="CloseButton" type="Button" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer" unique_id=318556174]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
@@ -330,10 +330,10 @@ theme_override_fonts/font = ExtResource("14_3k6ub")
 theme_override_font_sizes/font_size = 24
 text = "CLOSE SETTINGS"
 
-[node name="Label2" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer" unique_id=18733591]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="UI/Settings/Panel/Control"]
+[node name="Label" type="Label" parent="UI/Settings/Panel/Control" unique_id=213585660]
 self_modulate = Color(1, 1, 1, 0.509804)
 layout_mode = 1
 anchors_preset = 3
@@ -345,9 +345,9 @@ offset_left = -93.0
 offset_top = -23.9999
 grow_horizontal = 0
 grow_vertical = 0
-text = "v0.0.6.1 alpha"
+text = "v0.0.6.2 alpha"
 
-[node name="PluginDirDialog" type="FileDialog" parent="."]
+[node name="PluginDirDialog" type="FileDialog" parent="." unique_id=1017438644]
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(794, 519)
@@ -357,11 +357,11 @@ file_mode = 2
 access = 2
 script = ExtResource("6_sqx30")
 
-[node name="HTTPRequest" type="HTTPRequest" parent="."]
+[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=886775673]
 download_chunk_size = 131072
 use_threads = true
 
-[node name="ProgressTimer" type="Timer" parent="."]
+[node name="ProgressTimer" type="Timer" parent="." unique_id=1669534735]
 wait_time = 0.5
 
 [connection signal="settings_loaded" from="." to="UI/StatusBarPanel/Hotbar/UndeployButton" method="_on_root_settings_loaded"]

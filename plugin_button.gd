@@ -11,6 +11,7 @@ var plugin = {
 	"name":"",
 	"patches": [],
 	"repo":"",
+	"dir_suffix":"",
 	"branch": "main",
 	"blacklist": []
 }
@@ -31,6 +32,9 @@ var installed = false
 signal plugin_active
 signal plugin_installed
 
+func get_plugin_file_name():
+	return plugin["repo"].replace("/", "_") + plugin["dir_suffix"]
+
 func _ready():
 	visible = false
 	$HBoxContainer/InstallButton.disabled = true
@@ -48,12 +52,12 @@ func _ready():
 				plugin_path = mod_organizer_path + "/mods/"
 			else:
 				plugin_path = mod_organizer_path + "/"
-			source_path = "res://repositories/" + plugin["repo"].replace("/", "_")
+			source_path = "res://repositories/" + get_plugin_file_name()
 			if OS.has_feature("editor"):
 				source_path = ProjectSettings.globalize_path(source_path)
 			else:
 				source_path = DIR + source_path.replace("res://", "")
-			plugin_commit_history_path = "res://install_info/" + plugin["repo"].replace("/", "_") + ".json"
+			plugin_commit_history_path = "res://install_info/" + get_plugin_file_name() + ".json"
 			if OS.has_feature("editor"):
 				plugin_commit_history_path = ProjectSettings.globalize_path(plugin_commit_history_path)
 			else:
@@ -69,7 +73,7 @@ func _on_plugin_active():
 	$HBoxContainer/UndeployButton.visible = false
 	var mod_organizer_dir = DirAccess.open(mod_organizer_path)
 	if mod_organizer_dir:
-		if mod_organizer_dir.dir_exists(plugin_path + "/" + plugin["repo"].replace("/", "_") + "/"):
+		if mod_organizer_dir.dir_exists(plugin_path + "/" + get_plugin_file_name() + "/"):
 			plugin_installed.emit()
 
 # func _on_install_button_pressed():
@@ -82,15 +86,15 @@ func _on_plugin_active():
 # 	print("Copying " + source_path + " to " + "\""+plugin_path.replace(" ","' '")+"\"")
 # 	OS.execute("powershell.exe", ["Copy-Item", "-Recurse", source_path, "\""+plugin_path.replace(" ","' '")+"\""])
 # 	# copy commit history
-# 	OS.execute("powershell.exe", ["Copy-Item", "\""+plugin_commit_history_path.replace(" ","' '")+"\"", "\""+str(plugin_path+plugin["repo"].replace("/", "_")).replace(" ","' '")+"/commit_history.json"+"\""])
+# 	OS.execute("powershell.exe", ["Copy-Item", "\""+plugin_commit_history_path.replace(" ","' '")+"\"", "\""+str(plugin_path+get_plugin_file_name()).replace(" ","' '")+"/commit_history.json"+"\""])
 # 	for patch in plugin["patches"]: # Extract patches from res://plugin_patches/{patch} to the plugin folder
 # 		var patch_path = "res://plugin_patches/" + patch
 # 		if OS.has_feature("editor"):
 # 			patch_path = ProjectSettings.globalize_path(patch_path)
 # 		else:
 # 			patch_path = DIR + patch_path.replace("res://", "")
-# 		print("Patching " + patch_path + " to " + plugin_path+"/"+plugin["repo"].replace("/", "_"))
-# 		OS.execute("tar", ["-xf", "\""+patch_path+"\"", "-C", "\""+plugin_path+"/"+plugin["repo"].replace("/", "_")+"\""])
+# 		print("Patching " + patch_path + " to " + plugin_path+"/"+get_plugin_file_name())
+# 		OS.execute("tar", ["-xf", "\""+patch_path+"\"", "-C", "\""+plugin_path+"/"+get_plugin_file_name()+"\""])
 # 	plugin_installed.emit()
 
 func _on_install_button_pressed():
@@ -116,7 +120,7 @@ func _on_install_button_pressed():
 	command = [
 		"Copy-Item",
 		"\"\"" + plugin_commit_history_path + "\"\"",
-		"\"\"" + str(plugin_path+plugin["repo"].replace("/", "_")) + "/commit_history.json" + "\"\""
+		"\"\"" + str(plugin_path+get_plugin_file_name()) + "/commit_history.json" + "\"\""
 	]
 	
 	# copy commit history
@@ -131,8 +135,8 @@ func _on_install_button_pressed():
 			patch_path = ProjectSettings.globalize_path(patch_path)
 		else:
 			patch_path = DIR + patch_path.replace("res://", "")
-		print("Patching " + patch_path + " to " + plugin_path+"/"+plugin["repo"].replace("/", "_"))
-		OS.execute("tar", ["-xf", "\""+patch_path+"\"", "-C", "\""+plugin_path+"/"+plugin["repo"].replace("/", "_")+"\""])
+		print("Patching " + patch_path + " to " + plugin_path+"/"+get_plugin_file_name())
+		OS.execute("tar", ["-xf", "\""+patch_path+"\"", "-C", "\""+plugin_path+"/"+get_plugin_file_name()+"\""])
 	plugin_installed.emit()
 
 func _on_plugin_installed():
@@ -148,9 +152,7 @@ func _repo_updated():
 	$HBoxContainer/InstallButton.text = "Updating..."
 	$HBoxContainer/UndeployButton.disabled = true
 	$HBoxContainer/UndeployButton.visible = true
-
-
-
+	
 	$HBoxContainer/UndeployButton.disabled = false
 	$HBoxContainer/UndeployButton.visible = true
 	$HBoxContainer/InstallButton.text = "Deployed"
@@ -159,7 +161,7 @@ func undeploy():
 	if !installed:
 		return
 	$HBoxContainer/InstallButton.text = "Uninstalling..."
-	OS.move_to_trash(plugin_path + "/" + plugin["repo"].replace("/", "_")) # move plugin to trash
+	OS.move_to_trash(plugin_path + "/" + get_plugin_file_name()) # move plugin to trash
 	$HBoxContainer/InstallButton.disabled = false
 	$HBoxContainer/InstallButton.text = "Deploy"
 	$HBoxContainer/UndeployButton.disabled = true

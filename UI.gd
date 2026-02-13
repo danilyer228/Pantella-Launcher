@@ -9,6 +9,7 @@ extends Panel
 var is_downloading = false
 var last_downloaded_bytes = 0
 var loop_arounds = 0
+var is_negative = false
 
 func _on_close_button_pressed():
 	$ScrollContainer.visible = true
@@ -31,17 +32,21 @@ func _on_progress_timer_timeout():
 	var downloaded_bytes = http_request.get_downloaded_bytes() # Counts up 2GB at a time, then flips around to negative 2GB.
 	var two_gb = 1024 * 1024 * 1024 * 2
 	if downloaded_bytes < 0: # Count how many negatives it's reached
-		if last_downloaded_bytes >= 0:
+		if last_downloaded_bytes >= 0 and not is_negative:
 			loop_arounds += 1
+			is_negative = true
 		downloaded_bytes += two_gb * loop_arounds
 		print("Download looped around " + str(loop_arounds) + " times.")
-		
-	var downloaded_megabytes = downloaded_bytes / 1024 / 1024
+	else:
+		is_negative = false
+	
+	var downloaded_kilobytes = downloaded_bytes / 1024
+	var downloaded_megabytes = downloaded_kilobytes / 1024
+	var downloaded_gigabytes = downloaded_megabytes / 1024
 	if downloaded_megabytes > 1024:
-		var downloaded_gigabytes = downloaded_megabytes / 1024
 		status_bar.text = "Downloading " + current_download_name + " (" + str(downloaded_gigabytes) + " GB)"
 	elif downloaded_megabytes > 0:
 		status_bar.text = "Downloading " + current_download_name + " (" + str(downloaded_megabytes) + " MB)"
 	else:
-		status_bar.text = "Downloading " + current_download_name + " (" + str(downloaded_bytes / 1024) + " KB)"
+		status_bar.text = "Downloading " + current_download_name + " (" + str(downloaded_kilobytes) + " KB)"
 	last_downloaded_bytes = downloaded_bytes

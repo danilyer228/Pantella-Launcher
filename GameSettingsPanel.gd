@@ -28,7 +28,6 @@ func _on_mod_manager_option_button_item_selected(index): # 0 vortex, 1 mo2, -1 n
 	save_changes()
 		
 
-
 func _on_mod_manager_directory_dialog_dir_selected(dir):
 	$VBoxContainer/WarningLabel3.visible = false
 	game["mod_organizer_path"] = str(dir)
