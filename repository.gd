@@ -47,6 +47,10 @@ var current_download = {
 	"dir_suffix": "",
 	"blacklist": [],
 }
+var body_size = -1
+
+func get_repo_filename():
+	return repo["repo"].replace("/", "_") + repo["dir_suffix"]
 
 func apply_repo(json):
 	print("Applying repo")
@@ -61,9 +65,7 @@ func apply_repo(json):
 		repositories_dir = ProjectSettings.globalize_path(repositories_dir)
 	else:
 		repositories_dir = DIR + repositories_dir.replace("res://", "")
-	repo_dir = repositories_dir+repo["repo"].replace("/", "_")
-	if repo["dir_suffix"] != "":
-		repo_dir += repo["dir_suffix"]
+	repo_dir = repositories_dir + get_repo_filename()
 	
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Download").visible = false
 	get_node("RepoPanel/VBoxContainer/HBoxContainer/Controls/Start").visible = false
@@ -90,7 +92,7 @@ func check_for_updates(force=false):
 	if repo["commit"] != "":
 		print(repo["name"]+repo["dir_suffix"]+"is a static commit repo - no updates required")
 		return
-	var old_commit_info_path = "res://install_info/" + repo["repo"].replace("/", "_") + repo["dir_suffix"] + ".json"
+	var old_commit_info_path = "res://install_info/" + get_repo_filename() + ".json"
 	var global_oc_info_path = null
 	if OS.has_feature("editor"):
 		global_oc_info_path = ProjectSettings.globalize_path(old_commit_info_path)
@@ -100,7 +102,7 @@ func check_for_updates(force=false):
 	if FileAccess.file_exists(global_oc_info_path):
 		print("Checking "+repo["name"]+repo["dir_suffix"]+" for updates")
 		var repo_api_url = "https://api.github.com/repos/" + repo["repo"] + "/commits"
-		var new_commit_info_path = "res://temp/" + repo["repo"].replace("/", "_") + repo["dir_suffix"] + ".json"
+		var new_commit_info_path = "res://temp/" + get_repo_filename() + ".json"
 		var global_new_commit_info_path = null
 		if OS.has_feature("editor"):
 			global_new_commit_info_path = ProjectSettings.globalize_path(new_commit_info_path)
@@ -235,11 +237,8 @@ func download_repo():
 	status_bar.text = "Downloading " + repo["repo"] + "..."
 	
 	
-	var commit_info_path = "res://install_info/" + repo["repo"].replace("/", "_") + ".json"
-	var temp_commit_info_path = "res://temp/" + repo["repo"].replace("/", "_") + ".json"
-	if repo["dir_suffix"] != "":
-		commit_info_path += repo["dir_suffix"]
-		temp_commit_info_path += repo["dir_suffix"]
+	var commit_info_path = "res://install_info/" + get_repo_filename() + ".json"
+	var temp_commit_info_path = "res://temp/" + get_repo_filename() + ".json"
 	# Globalize
 	var global_c_info_path = null
 	var global_temp_c_info_path = null
@@ -316,9 +315,10 @@ func download_repo():
 		if repo["commit"] != "": # Static commit
 			repo_url = "https://github.com/" + repo["repo"] + "/archive/"+repo["commit"]+".zip"
 		print(repo_url)
-		var repo_path = "res://temp/" + repo["repo"].replace("/", "_")+repo["commit"] + ".zip"
+		var repo_path = "res://temp/" + get_repo_filename() + ".zip"
 		http_request.download_file = repo_path
 		http_request.request(repo_url)
+		body_size = http_request.get_body_size()
 		http_request.request_completed.connect(download_completed)
 		current_download = {
 			"repo": repo["repo"],
@@ -441,13 +441,18 @@ func download_repo():
 
 func download_completed(result, response_code, headers, body):
 	print("Download completed with result: " + str(result) + " and response code: " + str(response_code))
-	if result == HTTPRequest.RESULT_SUCCESS:
+	var download_size = http_request.get_downloaded_bytes()
+	var failed_download = result != HTTPRequest.RESULT_SUCCESS or response_code != 200
+	print("Expected body size: " + str(body_size) + " | Downloaded size: " + str(download_size), " | Current Body Size: " + str(http_request.get_body_size()))
+	if body_size > 0 and download_size != body_size:
+		failed_download = true
+	if not failed_download:
 		print("Download completed")
 		status_bar.text = "Downloaded " + current_download["repo"] + "[" + current_download["branch"] + "], extracting..."
 		print(http_request.download_file)
 		print(current_download)
 		# Check if repo directory exists, if not create it
-		var zip_path = http_request.download_file # "res://temp/" + repo["repo"].replace("/", "_") + ".zip"
+		var zip_path = http_request.download_file # "res://temp/" + get_repo_filename() + ".zip"
 		if OS.has_feature("editor"):
 			zip_path = ProjectSettings.globalize_path(zip_path)
 		else:
@@ -506,7 +511,7 @@ func download_completed(result, response_code, headers, body):
 			OS.move_to_trash(zip_path)
 		# Download with curl as fallback if the download failed and we're not in the editor
 		print("Attempting to download with curl as fallback")
-		var repo_url = $GithubHTTPRequest.url
+		var repo_url = http_request.url
 		if repo_url != "":
 			var curl_command = ["curl", "-L", repo_url, "-o", zip_path]
 			print("Executing command: " + " ".join(curl_command))
@@ -528,7 +533,7 @@ func _ready():
 	else:
 		temp_path = DIR + temp_path.replace("res://", "")
 	if repo["dir_suffix"] != "":
-		repo_dir = "res://repositories/" + repo["repo"].replace("/", "_") + repo["dir_suffix"]
+		repo_dir = "res://repositories/" + get_repo_filename()
 	if OS.has_feature("editor"):
 		repo_dir = ProjectSettings.globalize_path(repo_dir)
 	else:
