@@ -10,6 +10,7 @@ var DIR = OS.get_executable_path().get_base_dir() + "/"
 @onready var status_bar = $UI/StatusBarPanel/Hotbar/StatusBar
 @onready var repos = $UI/ScrollContainer/VBoxContainer/CenterContainer/repos
 @onready var game_settings = $UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel/VBoxContainer/GamesSettings
+@onready var popup = $UI/Popup
 
 var settings = {
 	"plugin_path":"",
@@ -161,9 +162,12 @@ func _a_plugin_undeployed():
 
 
 func _on_update_button_pressed():
+	status_bar.text = "Checking for updates..."
+	$UI/StatusBarPanel/Hotbar/UpdateButton.disabled = true
 	for repo in get_tree().get_nodes_in_group("repository"):
 		print("Checking "+repo.repo["name"]+repo.repo["dir_suffix"]+" for updates...")
-		repo.check_for_updates(true)
+		var needs_update = repo.check_for_updates(true)
+	$UI/StatusBarPanel/Hotbar/UpdateButton.disabled = false
 
 func show_spinner():
 	$UI/StatusBarPanel/Hotbar/Spinner.visible = true

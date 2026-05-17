@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://c262ypyoju4pq" path="res://SettingsButton.gd" id="9_iagd8"]
 [ext_resource type="Script" uid="uid://bryr4w6kf668c" path="res://UndeployButton.gd" id="10_l243b"]
 [ext_resource type="FontFile" uid="uid://8su8avp8yis1" path="res://Balgruf-JRye7.ttf" id="14_3k6ub"]
+[ext_resource type="Script" uid="uid://b2wc4rb7tktx8" path="res://popup.gd" id="14_getpj"]
 [ext_resource type="Script" uid="uid://bmddhggvi1qyl" path="res://GamesPanel.gd" id="15_plm84"]
 [ext_resource type="Script" uid="uid://wi4bchncarhm" path="res://GameSettingsLabel.gd" id="16_fudtm"]
 [ext_resource type="Script" uid="uid://bquvxqstj4fso" path="res://GamesSettings.gd" id="16_hyynm"]
@@ -146,6 +147,93 @@ layout_mode = 2
 script = ExtResource("3_0uige")
 
 [node name="Label2" type="Label" parent="UI/ScrollContainer/VBoxContainer" unique_id=341527196]
+layout_mode = 2
+
+[node name="Popup" type="Control" parent="UI" unique_id=548496288]
+visible = false
+z_index = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 128.0
+offset_top = 192.0
+offset_right = -128.0
+offset_bottom = -160.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_getpj")
+
+[node name="Panel" type="Panel" parent="UI/Popup" unique_id=1375262257]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.007
+anchor_top = 0.01
+anchor_right = 0.993
+anchor_bottom = 0.99
+offset_left = -0.0640001
+offset_right = 0.0639648
+offset_bottom = -6.10352e-05
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("4_uhq8h")
+
+[node name="Control" type="Control" parent="UI/Popup/Panel" unique_id=853576804]
+clip_contents = true
+layout_mode = 1
+anchor_left = 0.021
+anchor_top = 0.02
+anchor_right = 0.979
+anchor_bottom = 0.98
+offset_left = 0.143999
+offset_top = 0.319999
+offset_right = -0.144043
+offset_bottom = -0.320007
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/Popup/Panel/Control" unique_id=1287117953]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.023
+anchor_right = 0.977
+anchor_bottom = 1.0
+offset_left = 0.079998
+offset_right = -0.0800781
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Popup/Panel/Control/ScrollContainer" unique_id=1782393712]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="UI/Popup/Panel/Control/ScrollContainer/VBoxContainer" unique_id=787362384]
+layout_mode = 2
+text = "Title"
+label_settings = SubResource("LabelSettings_uvmp0")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Content" type="Label" parent="UI/Popup/Panel/Control/ScrollContainer/VBoxContainer" unique_id=537161736]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Content"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="CloseButton" type="Button" parent="UI/Popup/Panel/Control/ScrollContainer/VBoxContainer" unique_id=1039436479]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_fonts/font = ExtResource("14_3k6ub")
+theme_override_font_sizes/font_size = 24
+text = "BUTTON"
+
+[node name="Label2" type="Label" parent="UI/Popup/Panel/Control/ScrollContainer/VBoxContainer" unique_id=635861714]
 layout_mode = 2
 
 [node name="Settings" type="Control" parent="UI" unique_id=998351363]
@@ -345,7 +433,7 @@ offset_left = -93.0
 offset_top = -23.9999
 grow_horizontal = 0
 grow_vertical = 0
-text = "v0.0.6.2 alpha"
+text = "v0.0.7 alpha"
 
 [node name="PluginDirDialog" type="FileDialog" parent="." unique_id=1017438644]
 title = "Open a Directory"
@@ -372,6 +460,7 @@ wait_time = 0.5
 [connection signal="pressed" from="UI/StatusBarPanel/Hotbar/SettingsButton" to="UI" method="_on_settings_button_pressed"]
 [connection signal="pressed" from="UI/StatusBarPanel/Hotbar/UndeployButton" to="." method="_on_undeploy_button_pressed"]
 [connection signal="pressed" from="UI/StatusBarPanel/Hotbar/UndeployButton" to="UI/StatusBarPanel/Hotbar/UndeployButton" method="_on_pressed"]
+[connection signal="pressed" from="UI/Popup/Panel/Control/ScrollContainer/VBoxContainer/CloseButton" to="UI/Popup" method="_on_close_button_pressed"]
 [connection signal="resized" from="UI/Settings" to="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel" method="_on_settings_resized"]
 [connection signal="toggled" from="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label6/CrashCheckBox" to="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label6/CrashCheckBox" method="_on_toggled"]
 [connection signal="toggled" from="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label7/DebugCheckBox" to="UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label7/DebugCheckBox" method="_on_toggled"]
