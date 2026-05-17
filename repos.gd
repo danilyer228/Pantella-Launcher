@@ -29,6 +29,7 @@ func _on_root_settings_loaded():
 					load_repo(json)
 			file_name = dir.get_next()
 	print(repos)
+	$"../../../StatusBarPanel/Hotbar/UpdateButton".pressed.emit()
 
 
 func load_repo(repo):
