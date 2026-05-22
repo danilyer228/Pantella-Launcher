@@ -3,8 +3,8 @@ extends Panel
 var DIR = OS.get_executable_path().get_base_dir() + "/"
 
 @onready var root = get_tree().root.get_child(0)
-@onready var start_last_button = get_tree().root.get_child(0).get_node("UI/ScrollContainer2/VBoxContainer/SettingsPanel/VBoxContainer/StartLastButton")
-@onready var undeploy_button = get_tree().root.get_child(0).get_node("UI/ScrollContainer2/VBoxContainer/SettingsPanel/VBoxContainer/UndeployButton")
+# @onready var start_last_button = root.get_node("UI/ScrollContainer2/VBoxContainer/SettingsPanel/VBoxContainer/StartLastButton")
+# @onready var undeploy_button = root.get_node("UI/ScrollContainer2/VBoxContainer/SettingsPanel/VBoxContainer/UndeployButton")
 
 var plugin = {
 	"games": [], # not used, but it is here
