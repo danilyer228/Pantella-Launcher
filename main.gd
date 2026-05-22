@@ -87,6 +87,7 @@ func _ready():
 		fix_settings()
 	else:
 		save_settings()
+		popup.show_popup("Welcome to Pantella Launcher!", "It looks like this is your first time launching the Pantella Launcher. Please go to the settings tab and set your mod organizer paths and select a game before trying to download any repositories or deploy any plugins. If you need help, join our discord server at the link on the github page, or at https://discord.gg/M7Zw8mBY6r", "Okay")
 	settings_loaded.emit()
 
 func fix_settings():
