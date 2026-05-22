@@ -14,14 +14,14 @@
 	"config_files": [
 		"config.json"
 	],
-	"description": "Massive overhaul of the Mantella mod. More TTS Options, Customizable Multi-Language Support, Use multiple TTS at once, Custom Prompt Formats/Styles, Modular Behavior System and NPC Scripting API, Native Local LLM integration, Addon System, (basic) SexLab Support (via Addon), Vision Support via LLaVA, and more! Can be buggier than Mantella, it isn't stable and isn't complete, but is more feature rich and has a faster development cycle.\n\nOpenAI API is still supported, but primary focus is on other enabling native support for various other inference engines like llama-cpp-python, transformers, etc.\n\nSupports: Skyrim SE/AE/VR and Fallout New Vegas",
+	"description": "Massive overhaul of the Mantella mod. More TTS Options, Customizable Multi-Language Support, Use multiple TTS at once, Custom Prompt Formats/Styles, Modular Behavior System and NPC Scripting API, Native Local LLM integration, Modular Addon System, (basic) SexLab Support (via Addon), Vision Support via LLaVA, and more! Can be buggier than Mantella, it isn't stable and isn't complete, but is more feature rich and has a faster development cycle.\n\nSupports: Skyrim SE/AE/VR and Fallout New Vegas",
 	"dir_suffix": "_dev",
 	"entry_point": "main.py",
 	"file_name": "Pantella_dev.json",
-	"install_requirements": false,
-	"last_checked_for_updates": 0,
-	"last_updated": 0,
-	"name": "Pantella (pre-beta)",
+	"install_requirements": true,
+	"last_checked_for_updates": 0.0,
+	"last_updated": 0.0,
+	"name": "Pantella (beta)",
 	"plugins": [
 		{
 			"blacklist": [],

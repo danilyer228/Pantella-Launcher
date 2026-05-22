@@ -11,11 +11,11 @@
 	"config_files": [
 		"config.ini"
 	],
-	"description": "The Original Mantella dev repository. Mostly bug free, primarily built towards OpenAI chat completions. Slower release cycle, but more stable.\n\nSupports: Skyrim SE/AE, Skyrim VR, Fallout 4 and Fallout 4 VR",
+	"description": "The Original Mantella dev repository. Mostly bug free, slower release cycle, but more stable.\n\nSupports: Skyrim SE/AE, Skyrim VR, Fallout 4 and Fallout 4 VR",
 	"dir_suffix": "",
 	"entry_point": "main.py",
 	"file_name": "Mantella.json",
-	"install_requirements": false,
+	"install_requirements": true,
 	"last_checked_for_updates": 0,
 	"last_updated": 0,
 	"name": "Mantella",
