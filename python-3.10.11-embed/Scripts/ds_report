@@ -1,0 +1,6 @@
+#!Z:\projects\Mantella-Launcher\python-3.10.11-embed\python.exe
+
+from deepspeed.env_report import cli_main
+
+if __name__ == '__main__':
+    cli_main()
