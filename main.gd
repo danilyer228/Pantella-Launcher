@@ -6,9 +6,9 @@ var DIR = OS.get_executable_path().get_base_dir() + "/"
 @export var repo_configs_dir = "res://repo_configs/"
 @export var temp_dir = "res://temp/"
 @export var settings_file = "res://launcher_settings.json"
-@onready var plugins_menu = get_tree().root.get_child(0).get_node("UI/ScrollContainer2/VBoxContainer/PluginsMenu")
+# @onready var plugins_menu = get_tree().root.get_child(0).get_node("UI/ScrollContainer2/VBoxContainer/PluginsMenu")
 @onready var status_bar = $UI/StatusBarPanel/Hotbar/StatusBar
-@onready var repos = $UI/ScrollContainer/VBoxContainer/CenterContainer/repos
+# @onready var repos = $UI/ScrollContainer/VBoxContainer/CenterContainer/repos
 @onready var game_settings = $UI/Settings/Panel/Control/ScrollContainer/VBoxContainer/GamesPanel/VBoxContainer/GamesSettings
 @onready var popup = $UI/Popup
 
