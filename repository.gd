@@ -312,13 +312,13 @@ func download_repo():
 
 	if clone_repo:
 		print("Proceeding with repo download")
-		var git_command = [git_binary, "clone", "https://github.com/" + repo["repo"], get_repo_dir_path()]
+		var git_command = ["/c", "\""+git_binary+"\" clone https://github.com/" + repo["repo"] + " \""+get_repo_dir_path()+"\""]
 		print("Executing command: " + " ".join(git_command))
 		# var output = []
 		# var error_code = OS.execute("powershell.exe", git_command, output, true)
 		# print("Git command output: " + " ".join(output))
 		# print("Git command error code: " + str(error_code))
-		var repo_PID = OS.create_process("powershell.exe", git_command, true)
+		var repo_PID = OS.create_process("cmd.exe", git_command, true)
 
 		# wait for the repo to be cloned before checking out the specific commit, this is necessary to prevent errors when trying to checkout a commit that doesn't exist yet because the cloning process hasn't finished
 		while OS.is_process_running(repo_PID):
@@ -326,24 +326,22 @@ func download_repo():
 		
 		if repo["commit"] != "": # Static commit - checkout the specific commit
 			print("Repo is a static commit -- checking out specific commit: " + repo["commit"])
-			var git_checkout_command = [git_binary, "reset", "--hard", repo["commit"]]
+			var git_checkout_command = ["/c", "\""+git_binary+"\" reset --hard " + repo["commit"]]
 			print("Executing command: " + " ".join(git_checkout_command))
 			var output_checkout = []
-			var error_code_checkout = OS.execute("powershell.exe", git_checkout_command, output_checkout, true, get_repo_dir_path())
+			var error_code_checkout = OS.execute("cmd.exe", git_checkout_command, output_checkout, true, "\""+get_repo_dir_path()+"\"")
 			print("Git checkout command output: " + " ".join(output_checkout))
 			print("Git checkout command error code: " + str(error_code_checkout))
 		print("Finished downloading repo: " + repo["name"])
 
 	if update_repo:
-		var git_command = ["cd", get_repo_dir_path(), "&&", git_binary, "pull"]
-		if OS.has_feature("windows"):
-			git_command = ["cd", "\""+get_repo_dir_path()+"\";", git_binary, "pull"]
+		var git_command = ["/c", "cd \""+get_repo_dir_path()+"\" & \""+git_binary+"\" pull"]
 		print("Executing command: " + " ".join(git_command))
 		# var output = []
 		# var error_code = OS.execute("powershell.exe", git_command, output, true)
 		# print("Git command output: " + " ".join(output))
 		# print("Git command error code: " + str(error_code))
-		var repo_PID = OS.create_process("powershell.exe", git_command, true)
+		var repo_PID = OS.create_process("cmd.exe", git_command, true)
 		
 		# Replace the old commit info with the new commit info
 		print("Deleting "+commit_info_path)
@@ -451,28 +449,26 @@ func download_repo():
 					if plugin_node.installed:
 						plugin_node.undeploy()
 						plugin_node._on_install_button_pressed()
-			var git_command = [git_binary, "clone", "https://github.com/" + plugin["repo"], plugin_dir]
+			var git_command = ["/c", "\""+git_binary+"\" clone https://github.com/" + plugin["repo"] + " \""+plugin_dir+"\""]
 			print("Executing command: " + " ".join(git_command))
 			# OS.execute("powershell.exe", git_command, [], true)
-			var plugin_PID = OS.create_process("powershell.exe", git_command, true)
+			var plugin_PID = OS.create_process("cmd.exe", git_command, true)
 			while OS.is_process_running(plugin_PID):
 				await get_tree().process_frame
 			if plugin["commit"] != "": # Static commit - checkout the specific commit
-				var git_checkout_command = [git_binary, "reset", "--hard", plugin["commit"]]
-				OS.execute("powershell.exe", git_checkout_command, [], true, plugin_dir)
+				var git_checkout_command = ["/c", "\""+git_binary+"\" reset --hard " + plugin["commit"]]
+				OS.execute("cmd.exe", git_checkout_command, [], true, "\""+plugin_dir+"\"")
 			print("Finished downloading plugin: " + plugin["name"])
 
 		if update_plugin: # If the plugin is flagged for update, update it
-			var git_command = ["cd", plugin_dir, "&&", git_binary, "pull"]
-			if OS.has_feature("windows"):
-				git_command = ["cd", "\""+plugin_dir+"\";", git_binary, "pull"]
+			var git_command = ["/c", "cd \""+plugin_dir+"\" & \""+git_binary+"\" pull"]
 			print("Executing command: " + " ".join(git_command))
 			# var output = []
 			# var error_code = OS.execute("powershell.exe", git_command, output, true)
 			# print("Git command output: " + " ".join(output))
 			# print("Git command error code: " + str(error_code))
 			# print("Finished updating plugin: " + plugin["name"])
-			var plugin_PID = OS.create_process("powershell.exe", git_command, true)
+			var plugin_PID = OS.create_process("cmd.exe", git_command, true)
 			while OS.is_process_running(plugin_PID):
 				await get_tree().process_frame
 			print("Finished updating plugin: " + plugin["name"])

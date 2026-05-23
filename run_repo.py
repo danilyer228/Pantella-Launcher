@@ -74,7 +74,7 @@ try:
 
         python_path = repo_json.get("python_binary", python_path)
         if "/" in python_path or "\\" in python_path:
-            python_path = os.path.join(os.getcwd(), python_path)
+            python_path = os.path.abspath(os.path.join(os.getcwd(), python_path))
         if not os.path.exists(python_path):
             launcher_logging.error("Python binary not found at " + python_path + ", make sure the path is correct and that the python binary exists at that location. If you're using the launcher, please make sure that you downloaded the embedded python package for this repository and that the path to the python binary is correct in the repository config file. If you're running this script manually, you can specify the path to the python binary in the repository config file as well, just add a field called python_binary with the path to the python binary as the value.")
             input("Press enter to exit...")
@@ -148,9 +148,13 @@ try:
 
         # Start the repository by running whatever entry point is specified to be as a cmd line arg
         if needs_install and repo_json["install_requirements"]:
-            command_script = python_path + " -m pip install -r " + os.path.join(repo_path, requirements_filename) + " --force-reinstall"
+            command_script = f"\"{python_path}\" -m pip install -r \"{os.path.join(repo_path, requirements_filename)}\" --force-reinstall"
             launcher_logging.info(command_script)
-            os.system(command_script)
+            return_code = os.system('"' + command_script + '"')
+            if return_code != 0:
+                launcher_logging.error("Failed to install requirements")
+                input("Press enter to exit...")
+                raise Exception("Failed to install requirements")
             repo_json["requirements_hash"] = requirements_hash
             with open(repo_config_path, "w") as f:
                 json.dump(repo_json, f, indent=4)
