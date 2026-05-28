@@ -1,0 +1,43 @@
+{
+	"args": [],
+	"blacklist": [
+		"config.json",
+		"data",
+		"interface_configs",
+		"prompt_styles",
+		"addons",
+		"GPT_SECRET_KEY.txt",
+		"OPENAI_API_SECRET_KEY.txt"
+	],
+	"branch": "main",
+	"color": "orange",
+	"commit": "",
+	"config_files": [
+		"config.json"
+	],
+	"description": "Pantella FNV+ — fork of Pathos14489/Pantella focused on Fallout: New Vegas. Adds world-context providers (faction reputation, quest state, SPECIAL/skills, karma, location/time/equipment) for richer NPC dialogue. Multi-engine TTS via xVASynth, OpenRouter/local LLM, ChromaDB memory. FNV-only — Skyrim users should use stock Pantella (beta).",
+	"dir_suffix": "_fnvplus",
+	"entry_point": "main.py",
+	"file_name": "Pantella_fnv_plus.json",
+	"install_requirements": true,
+	"last_checked_for_updates": 0.0,
+	"last_updated": 0.0,
+	"name": "Pantella FNV+",
+	"plugins": [
+		{
+			"blacklist": [],
+			"branch": "main",
+			"commit": "",
+			"dir_suffix": "_fnvplus",
+			"games": [
+				"falloutnv"
+			],
+			"name": "PantellaNV",
+			"patches": [],
+			"repo": "danilyer228/PantellaNV"
+		}
+	],
+	"python_binary": "./python-3.10.11-embed/python.exe",
+	"repo": "danilyer228/Pantella",
+	"watchdog": true
+}
